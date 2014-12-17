@@ -55,8 +55,9 @@ namespace BinIO {
 
             for (int i = 0; i < numbits; i++) {
                 // Če je bit v data 1, ustrezni bit v bufferju postavimo na 1:
-                if ((data & ((ulong) 1 << i)) != 0) //SPREMENJENO: if ((data & (ulong)(1 << i)) != 0)
-                {
+                //SPREMENJENO: if ((data & (ulong)(1 << i)) != 0)
+                if ((data & ((ulong) 1 << i)) != 0) {
+                    
                     buffer[bytepos] += (byte) ((byte) 1 << bitpos);
                 }
 

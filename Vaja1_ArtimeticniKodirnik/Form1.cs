@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using ArtimeticniKodirnik;
 using ArtimeticniKodirnik.Dekodiranje;
 using ArtimeticniKodirnik.Kodiranje;
@@ -13,20 +12,22 @@ namespace Vaja1_ArtimeticniKodirnik {
 
     public partial class AritmeticnoKodiranje : Form {
         private Kodirnik _kodirnik;
-        private Dekodirnik _dekodirnik;
+        private readonly Dekodirnik _dekodirnik;
 
         public AritmeticnoKodiranje() {
             InitializeComponent();
 
             cbBiti.SelectedIndex = (int) StBitov.Bit8;
             _kodirnik = new Kodirnik((StBitov) cbBiti.SelectedIndex);
-            _kodirnik.SimbolZakodiran += KodirnikSimbolZakodiran;
-            _kodirnik.TabelaGenerirana += KodirnikTabelaGenerirana;
+            _kodirnik.SimbolZakodiran += SimbolZakodiran;
+            _kodirnik.TabelaGenerirana += TabelaGenerirana;
 
             _dekodirnik = new Dekodirnik();
+            _dekodirnik.SimbolDekodiran += SimbolDekodiran;
+            _dekodirnik.TabelaGenerirana += TabelaGenerirana;
         }
 
-        private void KodirnikTabelaGenerirana(IList<Simbol> tabela) {
+        private void TabelaGenerirana(IList<Simbol> tabela) {
             for (int i = 0; i < tabela.Count; i++) {
                 if (tabela[i] == null) {
                     continue;
@@ -44,7 +45,7 @@ namespace Vaja1_ArtimeticniKodirnik {
             }
         }
 
-        private void KodirnikSimbolZakodiran(byte simbol, ulong spMeja, ulong zgMeja, ulong korak, ulong novaSpMeja, ulong novaZgMeja, string operacije, int e3Count) {
+        private void SimbolZakodiran(byte simbol, ulong spMeja, ulong zgMeja, ulong korak, ulong novaSpMeja, ulong novaZgMeja, int e3Count, params Operacija[] operacije) {
             string[] podatki;
             if (e3Count == -1) {
                 podatki = new[] {
@@ -52,7 +53,7 @@ namespace Vaja1_ArtimeticniKodirnik {
                     "",
                     "",
                     "",
-                    operacije,
+                    string.Join<Operacija>("; ", operacije),
                     ""
                 };
             }
@@ -62,10 +63,30 @@ namespace Vaja1_ArtimeticniKodirnik {
                     string.Format("({0}, {1})", spMeja, zgMeja),
                     korak.ToString(CultureInfo.InvariantCulture),
                     string.Format("({0}, {1})", novaSpMeja, novaZgMeja),
-                    operacije,
+                    string.Join<Operacija>("; ", operacije),
                     e3Count.ToString(CultureInfo.InvariantCulture)
                 };
             }
+
+            foreach (Operacija operacija in operacije) {
+                tbRezultat.Text += operacija.Izhod;
+            }
+
+            lvPostopek.Items.Add(new ListViewItem(podatki));
+        }
+
+        private void SimbolDekodiran(string polje, ulong spMeja, ulong zgMeja, ulong korak, ulong vrednostSymb, byte simbol, ulong novaSpMeja, ulong novaZgMeja, params string[] operacije) {
+            string[] podatki = {
+                polje, 
+                string.Format("({0}, {1})", spMeja, zgMeja),
+                korak.ToString(CultureInfo.InvariantCulture),
+                vrednostSymb.ToString(CultureInfo.InvariantCulture),
+                new string((char)simbol, 1), 
+                string.Format("({0}, {1})", novaSpMeja, novaZgMeja),
+                string.Join("; ", operacije),
+            };
+
+            tbRezultat.Text += (char) simbol;
 
             lvPostopek.Items.Add(new ListViewItem(podatki));
         }
@@ -95,20 +116,26 @@ namespace Vaja1_ArtimeticniKodirnik {
                     break;
             }
 
-            _kodirnik.SimbolZakodiran -= KodirnikSimbolZakodiran;
-            _kodirnik.TabelaGenerirana -= KodirnikTabelaGenerirana;
+            _kodirnik.SimbolZakodiran -= SimbolZakodiran;
+            _kodirnik.TabelaGenerirana -= TabelaGenerirana;
 
             _kodirnik = new Kodirnik(stBitov);
 
-            _kodirnik.SimbolZakodiran += KodirnikSimbolZakodiran;
-            _kodirnik.TabelaGenerirana += KodirnikTabelaGenerirana;
+            _kodirnik.SimbolZakodiran += SimbolZakodiran;
+            _kodirnik.TabelaGenerirana += TabelaGenerirana;
         }
 
         private void BtnKodirajTextClick(object sender, EventArgs e) {
+            tbRezultat.Text = "";
             NastaviStolpceZaKodiranje();
 
             byte[] podatki = Encoding.ASCII.GetBytes(tbText.Text);
+
             _kodirnik.Kodiraj(podatki);
+        }
+
+        private void BtnDekodirajTextClick(object sender, EventArgs e) {
+            tbRezultat.Text = "";
         }
 
         private void NastaviStolpceZaKodiranje() {
@@ -141,29 +168,28 @@ namespace Vaja1_ArtimeticniKodirnik {
             lvPostopek.Columns[6].Width = 420;
         }
 
-        private void BtnDekodirajTextClick(object sender, EventArgs e) {
-
-        }
-
         private void btnKodirajDatoteko_Click(object sender, EventArgs e) {
+            tbRezultat.Text = "";
             NastaviStolpceZaKodiranje();
 
             OpenFileDialog ofd = new OpenFileDialog();
             if (ofd.ShowDialog() != DialogResult.OK) {
                 return;
-            }          
-  
-            _kodirnik.Kodiraj(ofd.FileName);
+            }
+
+            byte[] kodiraj = _kodirnik.Kodiraj(ofd.FileName);
 
             SaveFileDialog sfd = new SaveFileDialog();
             if (sfd.ShowDialog() != DialogResult.OK) {
                 MessageBox.Show("Niste izbrali izhodne datoteke");
                 return;
             }
-            _kodirnik.ZapisiDatoteko(sfd.FileName);
+
+            File.WriteAllBytes(sfd.FileName, kodiraj);
         }
 
         private void BtnDekodirajDatotekoClick(object sender, EventArgs e) {
+            tbRezultat.Text = "";
             NastaviStolpceZaDekodiranje();
 
             OpenFileDialog ofd = new OpenFileDialog();

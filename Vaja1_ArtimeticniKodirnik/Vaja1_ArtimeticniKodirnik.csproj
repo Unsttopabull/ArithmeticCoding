@@ -76,6 +76,10 @@
       <Project>{36f006e8-cab2-4e26-90c0-80d7d3f5e8c0}</Project>
       <Name>Artimeticni kodirnik</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BinIO\BinIO.csproj">
+      <Project>{324bfed6-6bd4-41c8-aef7-8c7ca59137c0}</Project>
+      <Name>BinIO</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

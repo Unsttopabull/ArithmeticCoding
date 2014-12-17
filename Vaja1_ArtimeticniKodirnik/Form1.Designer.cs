@@ -30,7 +30,7 @@
             this.columnHeaderP2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeaderP1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lblRezultat = new System.Windows.Forms.Label();
-            this.textBoxResult = new System.Windows.Forms.TextBox();
+            this.tbRezultat = new System.Windows.Forms.TextBox();
             this.gbPostopek = new System.Windows.Forms.GroupBox();
             this.lvPostopek = new System.Windows.Forms.ListView();
             this.columnHeaderP6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -86,17 +86,17 @@
             this.lblRezultat.TabIndex = 3;
             this.lblRezultat.Text = "Result:";
             // 
-            // textBoxResult
+            // tbRezultat
             // 
-            this.textBoxResult.Location = new System.Drawing.Point(52, 300);
-            this.textBoxResult.Name = "textBoxResult";
-            this.textBoxResult.Size = new System.Drawing.Size(844, 20);
-            this.textBoxResult.TabIndex = 2;
+            this.tbRezultat.Location = new System.Drawing.Point(52, 300);
+            this.tbRezultat.Name = "tbRezultat";
+            this.tbRezultat.Size = new System.Drawing.Size(844, 20);
+            this.tbRezultat.TabIndex = 2;
             // 
             // gbPostopek
             // 
             this.gbPostopek.Controls.Add(this.lblRezultat);
-            this.gbPostopek.Controls.Add(this.textBoxResult);
+            this.gbPostopek.Controls.Add(this.tbRezultat);
             this.gbPostopek.Controls.Add(this.lvPostopek);
             this.gbPostopek.Location = new System.Drawing.Point(20, 247);
             this.gbPostopek.Name = "gbPostopek";
@@ -274,7 +274,7 @@
         private System.Windows.Forms.ColumnHeader columnHeaderP2;
         private System.Windows.Forms.ColumnHeader columnHeaderP1;
         private System.Windows.Forms.Label lblRezultat;
-        private System.Windows.Forms.TextBox textBoxResult;
+        private System.Windows.Forms.TextBox tbRezultat;
         private System.Windows.Forms.GroupBox gbPostopek;
         private System.Windows.Forms.ListView lvPostopek;
         private System.Windows.Forms.ColumnHeader columnHeaderP6;

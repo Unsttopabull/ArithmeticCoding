@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace BinIO {
 
-    public class BinRead {
+    public class BinRead : IBinRead {
         private readonly byte[] _buffer;
         private readonly int _buffersize;
         private int _bytepos;
@@ -91,6 +92,19 @@ namespace BinIO {
             byte[] temp2 = BitConverter.GetBytes(temp);
 
             return BitConverter.ToDouble(temp2, 0);
+        }
+
+        public byte[] ReadToEnd() {
+            List<byte> bajti = new List<byte>();
+            while (!Eof()) {
+                bajti.Add(ReadByte());
+            }
+
+            return bajti.ToArray();
+        }
+
+        public void Close() {
+            
         }
 
         #endregion

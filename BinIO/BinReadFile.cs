@@ -4,13 +4,12 @@ using System.IO;
 
 namespace BinIO {
 
-    public class BinReadFile {
+    public class BinReadFile : IBinRead {
         private BinaryReader br;
         private byte[] buffer;
         private int buffersize = 65536;
         private int bytepos = 0;
         private byte bitpos = 0;
-
 
         public BinReadFile(string filename, int bufsize = 65536) {
             br = new BinaryReader(new FileStream(filename, FileMode.Open));
@@ -20,8 +19,7 @@ namespace BinIO {
             FillBuffer();
         }
 
-
-        public void CloseFile() {
+        public void Close() {
             br.Close();
         }
 
@@ -34,7 +32,7 @@ namespace BinIO {
             }
 
             ulong rezultat = 0;
-            for (int i = 0; (i < numbits) & !EOF(); i++) {
+            for (int i = 0; (i < numbits) & !Eof(); i++) {
                 // Če je bit postavljen na 1, prištevejemo ekvivalentno vrednost k rezultatu:
                 if (((buffer[bytepos]) & (byte) (1 << bitpos)) != 0) {
                     rezultat += ((ulong) 1 << i);
@@ -118,6 +116,15 @@ namespace BinIO {
 
         #endregion
 
+        public byte[] ReadToEnd() {
+            List<byte> bajti = new List<byte>();
+            while (!Eof()) {
+                bajti.Add(ReadByte());
+            }
+
+            return bajti.ToArray();
+        }
+
         #region Dodatne metode za delovanje:
 
         // Metoda za polnjenja bufferja:
@@ -138,7 +145,7 @@ namespace BinIO {
         }
 
         // Metoda za preverjanje ce smo prisli do konca datoteke:
-        public bool EOF() {
+        public bool Eof() {
             if (br.BaseStream.Position == br.BaseStream.Length) {
                 if (bytepos == buffersize) {
                     return true;
@@ -148,7 +155,7 @@ namespace BinIO {
         }
 
         // Metoda, ki vrne koliko bitov se lahko preberemo:
-        public ulong BitsTillEOF() {
+        public ulong BitsTillEof() {
             ulong izhod = (ulong) (br.BaseStream.Length - br.BaseStream.Position) * 8;
             izhod += (ulong) (buffersize - bytepos - 1) * 8;
             izhod += (ulong) 7 - bitpos;

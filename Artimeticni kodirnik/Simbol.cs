@@ -2,13 +2,8 @@
 
     public class Simbol {
 
-        public Simbol() {
-            
-        }
-
-        public Simbol(ulong frekvenca, double verjetnost, ulong zgornjaMeja, ulong spodnjaMeja, byte vrednost) {
+        public Simbol(ulong frekvenca, ulong zgornjaMeja, ulong spodnjaMeja, byte vrednost) {
             Frekvenca = frekvenca;
-            Verjetnost = verjetnost;
             ZgornjaMeja = zgornjaMeja;
             SpodnjaMeja = spodnjaMeja;
             Vrednost = vrednost;
@@ -28,7 +23,7 @@
         /// <summary>Returns a string that represents the current object.</summary>
         /// <returns>A string that represents the current object.</returns>
         public override string ToString() {
-            return string.Format("{4} | F: {0}, P: {1}, SP: {2}, ZG: {3}", Frekvenca, Verjetnost, SpodnjaMeja, ZgornjaMeja, (char) Vrednost);
+            return string.Format("{3} | F: {0}, P: {1}, SP: {1}, ZG: {2}", Frekvenca, SpodnjaMeja, ZgornjaMeja, (char) Vrednost);
         }
     }
 

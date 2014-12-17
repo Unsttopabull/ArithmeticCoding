@@ -16,6 +16,9 @@ namespace BinIO {
             _output = new List<byte>();
         }
 
+        public int BytePos { get { return _bytepos; } }
+        public byte BitPos { get { return _bitpos; } }
+
         public void Flush() {
             // Zapišemo napolnjene byte-e iz bufferja:
             _output.AddRange(_buffer.GetRange(0, _bytepos));
@@ -31,6 +34,18 @@ namespace BinIO {
 
             // Za vsak slučaj če nam je ostalo kaj v prejšni iteraciji branja v buffer.
             _buffer = new List<byte>(new byte[_buffersize]);
+        }
+
+        public byte[] GetBuffer() {
+            // Zapišemo napolnjene byte-e iz bufferja:
+            _output.AddRange(_buffer.GetRange(0, _bytepos));
+            // Če smo kateri byte le delno napolnili, ga tudi zapišemo:
+            if (_bitpos > 0) {
+                byte mask = (byte) ((1 << _bitpos) - 1);
+                _output.Add((byte) (_buffer[_bytepos] & mask));
+            }
+
+            return _output.ToArray();
         }
 
         public byte[] GetOutput() {

@@ -1,15 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using BinIO;
 
 namespace ArtimeticniKodirnik.Dekodiranje {
 
     public class Dekodirnik {
+        private const ulong MASKA_8 = 0x7F;
+        private const ulong MASKA_16 = 0x7FFF; 
+        private const ulong MASKA_32 = 0x7FFFFFFF; 
+        private const ulong MASKA_64 = 0x7FFFFFFFFFFFFFFF;
+
+        private byte _stBitov;
+        private ulong _maska;
+
         private Simbol[] _tabelaFrekvenc;
+        private List<string> _operacije;
         private string _outFile;
-        private BinRead _vhod;
+        private IBinRead _vhod;
         private List<byte> _list;
         private ulong _cF;
 
@@ -23,39 +31,51 @@ namespace ArtimeticniKodirnik.Dekodiranje {
         //private Polje _polje;
         private ulong _polje;
 
-        public Dekodirnik() {
-        }
+        public delegate void SimbolDekodiranHandler(string v, ulong spMeja, ulong zgMeja, ulong korak, ulong vrednostSymb, byte simbol, ulong novaSpMeja, ulong novaZgMeja, params string[] operacije);
+        public event SimbolDekodiranHandler SimbolDekodiran;
+
+        public delegate void TabelaGeneriranaHandler(IList<Simbol> tabela);
+        public event TabelaGeneriranaHandler TabelaGenerirana;
 
         public void Dekodiraj(string inFile, string outFile) {
-            Dekodiraj(File.ReadAllBytes(inFile), outFile);
+            Dekodiraj(new BinReadFile(inFile), outFile);
         }
 
         public void Dekodiraj(byte[] podatki, string outFile) {
-            _vhod = new BinRead(podatki);
+            Dekodiraj(new BinRead(podatki), outFile);
+        }
+
+        private void Dekodiraj(IBinRead read, string outFile) {
+            _vhod = read;
+            _operacije = new List<string>();
+            
             _outFile = outFile;
 
             _list = new List<byte>();
 
             ulong readBits = _vhod.ReadBits(2);
 
-            byte stBitov;
             switch (readBits) {
                 case 0:
-                    stBitov = 8;
+                    _stBitov = 8;
+                    _maska = MASKA_8;
                     break;
                 case 1:
-                    stBitov = 16;
+                    _stBitov = 16;
+                    _maska = MASKA_16;
                     break;
                 case 3:
-                    stBitov = 64;
+                    _stBitov = 64;
+                    _maska = MASKA_64;
                     break;
                 default:
-                    stBitov = 32;
+                    _stBitov = 32;
+                    _maska = MASKA_32;
                     break;
             }
 
             _spodnjaMeja = 0;
-            _zgornjaMeja = ((ulong) Math.Pow(2, stBitov)) - 1;
+            _zgornjaMeja = ((ulong) Math.Pow(2, _stBitov - 1)) - 1;
 
             _drugaCetrtina = (_zgornjaMeja + 1) / 2;
             _prvaCetrtina = _drugaCetrtina / 2;
@@ -63,14 +83,23 @@ namespace ArtimeticniKodirnik.Dekodiranje {
 
             NapolniTabeloUrejeno();
 
-            _polje = _vhod.ReadBits((byte) (stBitov - 1));
+            PosljiTabeloPosljusalcem();
+
+            //_polje = _vhod.ReadBits((byte) (_stBitov - 1));
+            // Napolnimo polje z n-1 bitov:
+            _polje = 0;
+            for (int i = 0; i < _stBitov - 1; i++) {
+                _polje = (_polje << 1) + _vhod.ReadBits(1);
+            }
+
+            string poljeBin = BinUtils.Long2Bin(_polje, _stBitov - 1);
             //_polje = new Polje((StBitov)readBits, polje);
 
             ulong iter = 1;
             do {
 
                 ulong korak = (_zgornjaMeja - _spodnjaMeja + 1) / _cF;
-                double vrednost = (_polje - _spodnjaMeja) / (double) korak;
+                ulong vrednost = (_polje - _spodnjaMeja) / korak;
 
                 Simbol simbol = NajdiSimbol(vrednost);
                 if (simbol == null) {
@@ -80,8 +109,14 @@ namespace ArtimeticniKodirnik.Dekodiranje {
 
                 _list.Add(simbol.Vrednost);
 
+                ulong spMeja = _spodnjaMeja;
+                ulong zgMeja = _zgornjaMeja;
+
                 _zgornjaMeja = _spodnjaMeja + korak * simbol.SpodnjaMeja;
                 _spodnjaMeja = _spodnjaMeja + korak * simbol.ZgornjaMeja - 1;
+
+                ulong nSpMeja = _spodnjaMeja;
+                ulong nZgMeja = _zgornjaMeja;
 
                 bool e1, e2;
                 do {
@@ -96,6 +131,8 @@ namespace ArtimeticniKodirnik.Dekodiranje {
                         _zgornjaMeja = (_zgornjaMeja << 1) + 1;
 
                         _polje = (_polje << 1) + _vhod.ReadBits(1);
+
+                        _operacije.Add(string.Format("E1({0}, {1}) V={2}", spMeja, zgMeja, _polje & _maska));
                     }
                     else if (_spodnjaMeja >= _drugaCetrtina) {
                         //E2
@@ -104,6 +141,8 @@ namespace ArtimeticniKodirnik.Dekodiranje {
                         _spodnjaMeja = (_spodnjaMeja - _drugaCetrtina) << 1;
                         _zgornjaMeja = ((_zgornjaMeja - _drugaCetrtina) << 1) + 1;
                         _polje = ((_polje - _drugaCetrtina) << 1) + _vhod.ReadBits(1);
+
+                        _operacije.Add(string.Format("E2({0}, {1}) V={2}", spMeja, zgMeja, _polje & _maska));
                     }
                 }
                 while (e1 || e2); //dokler ne e1 in e2 nista izpolnjena
@@ -114,13 +153,33 @@ namespace ArtimeticniKodirnik.Dekodiranje {
                     _zgornjaMeja = ((_zgornjaMeja - _prvaCetrtina) << 1) + 1;
                     
                     _polje = ((_polje - _prvaCetrtina) << 1) + _vhod.ReadBits(1);
+
+                    _operacije.Add(string.Format("E3({0}, {1}) V={2}", spMeja, zgMeja, _polje & _maska));
                 }
 
+                PosljiDekodiranSimbolPosljusalcem(spMeja, zgMeja, korak, nSpMeja, nZgMeja, vrednost, simbol.Vrednost);
                 iter++;
             }
             while (iter >= _cF);
 
             File.WriteAllBytes(outFile, _list.ToArray());
+        }
+
+        private void PosljiDekodiranSimbolPosljusalcem(ulong spMeja, ulong zgMeja, ulong korak, ulong nSpMeja, ulong nZgMeja, ulong vrednost, byte simbol) {
+            if (SimbolDekodiran == null) {
+                return;
+            }
+
+            string polje = BinUtils.Long2Bin(_polje, _stBitov - 1);
+            SimbolDekodiran(polje, spMeja, zgMeja, korak, vrednost, simbol, nSpMeja, nZgMeja, _operacije.ToArray());
+        }
+
+        private void PosljiTabeloPosljusalcem() {
+            if (TabelaGenerirana == null) {
+                return;
+            }
+
+            TabelaGenerirana(_tabelaFrekvenc);
         }
 
         private Simbol NajdiSimbol(double vrednost) {
@@ -166,13 +225,9 @@ namespace ArtimeticniKodirnik.Dekodiranje {
                 _cF += frekvenca;
 
                 ulong zgMeja = spMeja + frekvenca;
-                simboli.Add(new Simbol(frekvenca, 0, zgMeja, spMeja, vrednost));
+                simboli.Add(new Simbol(frekvenca, zgMeja, spMeja, vrednost));
 
                 spMeja = zgMeja;
-            }
-
-            foreach (Simbol simbol in simboli) {
-                simbol.Verjetnost = simbol.Frekvenca / (double) _cF;
             }
 
             _tabelaFrekvenc = simboli.ToArray();
