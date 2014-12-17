@@ -40,7 +40,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinRead.cs" />
+    <Compile Include="BinReadFile.cs" />
+    <Compile Include="BinUtils.cs" />
     <Compile Include="BinWrite.cs" />
+    <Compile Include="BinWriteFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

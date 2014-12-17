@@ -5,13 +5,11 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vaja1_ArtimeticniKodirnik", "Vaja1_ArtimeticniKodirnik\Vaja1_ArtimeticniKodirnik.csproj", "{904D0D28-B6BD-42E9-B4B7-CBFA2E80F8D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Artimeticni kodirnik", "Artimeticni kodirnik\Artimeticni kodirnik.csproj", "{36F006E8-CAB2-4E26-90C0-80D7D3F5E8C0}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{16BA410A-B3B9-4E38-9611-B3C85158C50E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryReadWrite", "BinaryReadWrite\BinaryReadWrite.csproj", "{ED376C3A-B1AE-45E0-A594-B073BF7B7796}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinIO", "BinIO\BinIO.csproj", "{324BFED6-6BD4-41C8-AEF7-8C7CA59137C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Artimeticni kodirnik", "Artimeticni kodirnik\Artimeticni kodirnik.csproj", "{36F006E8-CAB2-4E26-90C0-80D7D3F5E8C0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,22 +21,18 @@ Global
 		{904D0D28-B6BD-42E9-B4B7-CBFA2E80F8D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{904D0D28-B6BD-42E9-B4B7-CBFA2E80F8D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{904D0D28-B6BD-42E9-B4B7-CBFA2E80F8D6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{36F006E8-CAB2-4E26-90C0-80D7D3F5E8C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{36F006E8-CAB2-4E26-90C0-80D7D3F5E8C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{36F006E8-CAB2-4E26-90C0-80D7D3F5E8C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{36F006E8-CAB2-4E26-90C0-80D7D3F5E8C0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{16BA410A-B3B9-4E38-9611-B3C85158C50E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{16BA410A-B3B9-4E38-9611-B3C85158C50E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16BA410A-B3B9-4E38-9611-B3C85158C50E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16BA410A-B3B9-4E38-9611-B3C85158C50E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ED376C3A-B1AE-45E0-A594-B073BF7B7796}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ED376C3A-B1AE-45E0-A594-B073BF7B7796}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ED376C3A-B1AE-45E0-A594-B073BF7B7796}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ED376C3A-B1AE-45E0-A594-B073BF7B7796}.Release|Any CPU.Build.0 = Release|Any CPU
 		{324BFED6-6BD4-41C8-AEF7-8C7CA59137C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{324BFED6-6BD4-41C8-AEF7-8C7CA59137C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{324BFED6-6BD4-41C8-AEF7-8C7CA59137C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{324BFED6-6BD4-41C8-AEF7-8C7CA59137C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36F006E8-CAB2-4E26-90C0-80D7D3F5E8C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36F006E8-CAB2-4E26-90C0-80D7D3F5E8C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36F006E8-CAB2-4E26-90C0-80D7D3F5E8C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36F006E8-CAB2-4E26-90C0-80D7D3F5E8C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

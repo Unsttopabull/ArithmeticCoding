@@ -47,9 +47,9 @@
       <Project>{36f006e8-cab2-4e26-90c0-80d7d3f5e8c0}</Project>
       <Name>Artimeticni kodirnik</Name>
     </ProjectReference>
-    <ProjectReference Include="..\BinaryReadWrite\BinaryReadWrite.csproj">
-      <Project>{ed376c3a-b1ae-45e0-a594-b073bf7b7796}</Project>
-      <Name>BinaryReadWrite</Name>
+    <ProjectReference Include="..\BinIO\BinIO.csproj">
+      <Project>{324BFED6-6BD4-41C8-AEF7-8C7CA59137C0}</Project>
+      <Name>BinIO</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

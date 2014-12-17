@@ -34,9 +34,11 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Dekodirnik.cs" />
+    <Compile Include="Dekodiranje\Dekodirnik.cs" />
+    <Compile Include="Dekodiranje\Polje.cs" />
+    <Compile Include="Dekodiranje\RangeComparer.cs" />
     <Compile Include="GlobalniInterval.cs" />
-    <Compile Include="Kodirnik.cs" />
+    <Compile Include="Kodiranje\Kodirnik.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Simbol.cs" />
     <Compile Include="StBitov.cs" />
