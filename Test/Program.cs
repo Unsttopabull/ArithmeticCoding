@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using ArtimeticniKodirnik;
 using BinIO;
@@ -40,27 +41,35 @@ namespace Test {
             BitWriter bw = new BitWriter();
 
             bw.WriteBits(3, 2);
-            bw.WriteInt32(int.MinValue);
+
+            Random r = new Random();
+            int next = r.Next();
+
+            bw.WriteInt32(next);
 
             //bw.WriteInt32(int.MaxValue/2); 
             //1073741823
             //0011 1111 1111 1111 1111 1111 1111 1111
 
-            byte[] min = BitConverter.GetBytes(int.MaxValue);
-            string long2Bin = BinUtils.Long2Bin(int.MaxValue, 32);
+            byte[] min = BitConverter.GetBytes(next);
+            string nextBin = BinUtils.Long2BinBajti((ulong) next, 32);
 
             byte bitPos = bw.BitPos;
             byte[] bytes = bw.GetData();
+
+            string zapisano = string.Join(" ", bytes.Take(5).Select(b => BinUtils.Long2BinBajti(b, 8)));
 
             File.WriteAllBytes("out.bin", bytes);
 
             byte[] readAllBytes = File.ReadAllBytes("out.bin");
 
             BitReader br = new BitReader(readAllBytes);
+
             ulong readBits = br.ReadBits(2);
             int readInt32 = br.ReadInt32();
 
             byte[] bytes1 = BitConverter.GetBytes(readInt32);
+            string readBin = BinUtils.Long2BinBajti((ulong) readInt32, 32);
 
             //int int32 = BitConverter.ToInt32(readAllBytes, 0);
         }

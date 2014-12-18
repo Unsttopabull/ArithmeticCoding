@@ -23,6 +23,12 @@ namespace BinIO {
 
         public bool EOF { get; private set; }
 
+        public void SeekToStart() {
+            _ms.Seek(0, SeekOrigin.Begin);
+            _bitPos = 0;
+            GetByte();
+        }
+
         private bool GetByte() {
             int b = _ms.ReadByte();
             if (b == -1) {
@@ -30,6 +36,7 @@ namespace BinIO {
                 return false;
             }
             _currByte = (byte) b;
+            _bitPos = 0;
             return true;
         }
 
@@ -64,13 +71,10 @@ namespace BinIO {
             }
 
             //beremo čez trenutni bajt
-            byte preostaloBitovVtrenBajtu = (byte) (8 - _bitPos);
-            ulong data = TrenBajtDoKonca(preostaloBitovVtrenBajtu);
+            byte bitsToFull = (byte) (8 - _bitPos);
+            ulong data = TrenBajtDoKonca(bitsToFull);
 
-            int seZaBrati = numbits - preostaloBitovVtrenBajtu;
-
-            //pomaknemo delni bajt na levi konec
-            //data <<= (seZaBrati + 1);
+            int seZaBrati = numbits - bitsToFull;
 
             int stCelihBajtov = seZaBrati / 8;
 
@@ -82,35 +86,48 @@ namespace BinIO {
                 }
 
                 //spojimo bajte
-                //postavimo "bajt" na mesto kjer bo nastopal v rezultatu branja
+                //postavimo "_currByte" na mesto kjer bo nastopal v rezultatu branja
                 //in ga z ALI vpišemo v rezultat
-                //int dolzShiftaZaBajtI = (seZaBrati - 8 * i);
-
-                int dolzShiftaZaBajtI = (preostaloBitovVtrenBajtu + 8 * i);
+                int dolzShiftaZaBajtI = (bitsToFull + 8 * i);
                 data |= ((ulong) _currByte) << dolzShiftaZaBajtI;
             }
 
-            if (!EOF) {
-                byte preostaloBitovZaBrat = (byte) (seZaBrati - (stCelihBajtov * 8));
-
-                //preberemo naslednji bajt
-                GetByte();
-
-                ulong zacetek = ReadBits(preostaloBitovZaBrat);
-                zacetek <<= numbits - preostaloBitovZaBrat;
-
-                data |= zacetek;
+            if (EOF) {
+                return data;
             }
+
+            byte preostaloBitovZaBrat = (byte) (seZaBrati - (stCelihBajtov * 8));
+
+            //preberemo naslednji bajt
+            GetByte();
+
+            ulong zacetek = ReadBits(preostaloBitovZaBrat);
+            zacetek <<= numbits - preostaloBitovZaBrat;
+
+            data |= zacetek;
             return data;
         }
 
         private ulong TrenBajtDoKonca(byte numbits) {
             byte maska = (byte) ((1 << numbits) - 1);
 
-            _bitPos = 0;
+            ulong data = (ulong) (_currByte & maska);
             GetByte();
 
-            return (ulong) (_currByte & maska);
+            return data;
+        }
+
+        public byte[] ReadBytes(int numBytes) {
+            if (numBytes <= 0) {
+                return new byte[0];
+            }
+
+            byte[] bajti = new byte[numBytes];
+            for (int i = 0; i < numBytes; i++) {
+                bajti[i] = ReadByte();
+            }
+
+            return bajti;
         }
 
         public byte ReadByte() {

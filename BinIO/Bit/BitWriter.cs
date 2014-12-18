@@ -78,29 +78,31 @@ namespace BinIO {
         }
 
         public void WriteSByte(sbyte data) {
-
+            WriteBits((ulong) data, 8);
         }
 
         public void WriteInt16(short data) {
+            WriteBits((ulong) data, 16);
         }
 
         public void WriteUInt16(ushort data) {
+            WriteBits(data, 16);
         }
 
         public void WriteInt32(int data) {
-            //string s = Convert.ToString(data, 2);
-            //string s2 = BinUtils.Long2Bin((ulong) data, 32);
-
             WriteBits((ulong) data, 32);
         }
 
         public void WriteUInt32(uint data) {
+            WriteBits(data, 32);
         }
 
         public void WriteLong(long data) {
+            WriteBits((ulong) data, 64);
         }
 
         public void WriteULong(ulong data) {
+            WriteBits(data, 64);
         }
 
         public void WriteFloat(float data) {
