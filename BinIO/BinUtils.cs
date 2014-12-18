@@ -11,7 +11,7 @@ namespace BinIO {
             foreach (byte b in bajti) {
                 sb.Append(ULong2BinBajti(b, 8) + " ");
             }
-            return sb.ToString().TrimStart(' ');
+            return sb.ToString().Trim(' ');
         }
 
         public static string ULong2Bin(ulong data, int numBits) {

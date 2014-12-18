@@ -39,14 +39,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BinRead.cs" />
-    <Compile Include="BinReadFile.cs" />
     <Compile Include="BinUtils.cs" />
-    <Compile Include="BinWrite.cs" />
-    <Compile Include="BinWriteFile.cs" />
+    <Compile Include="Bit\BitReader2.cs" />
     <Compile Include="Bit\BitReader.cs" />
+    <Compile Include="Bit\BitWriter2.cs" />
     <Compile Include="Bit\BitWriter.cs" />
-    <Compile Include="IBinRead.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -10,29 +10,13 @@ namespace Test {
 
     internal class Program {
         private static void Main(string[] args) {
-            //byte[] arr = ZapisiTabelo();
+            byte[] arr = ZapisiGlavo();
+            //File.WriteAllBytes("tabela.bin", arr);
 
-            //File.WriteAllBytes("test.bin", arr);
-            //byte[] arr2 = File.ReadAllBytes("test.bin");
+            ulong cF;
+            Simbol[] tabela = BeriGlavo(arr, out cF);
 
-            byte[] bytes = BitConverter.GetBytes(int.MinValue);
-            Array.Resize(ref bytes, 8);
-
-            ulong u = BitConverter.ToUInt64(bytes, 0);
-
-            int a = 1689486;
-            File.WriteAllBytes("int.out", BitConverter.GetBytes(a));
-
-            int i = 63 << 26;
-            string long2Bin = BinUtils.ULong2Bin((ulong) i, 32);
-
-            //PreberiTabelo(arr2);
-            byte t = (1 << 8 - 2) - 1;
-            byte t2 = (byte) ~t;
-            string s = Convert.ToString(t, 2);
-            string s2 = Convert.ToString(t2, 2);
-
-            TestBitWriter();
+            //TestBitWriter();
 
             Console.ReadLine();
         }
@@ -66,24 +50,33 @@ namespace Test {
             string fBinRead = BinUtils.Bytes2Bin(readBajti);
         }
 
-        private static void PreberiTabelo(byte[] arr) {
-            BinRead br = new BinRead(arr);
+        private static Simbol[] BeriGlavo(byte[] arr, out ulong cF) {
+            BitReader br = new BitReader(arr);
+            ulong readBits = br.ReadBits(2);
 
-            ulong stBitov = br.ReadBits(2);
+            int stSimbolov = br.ReadByte();
 
-            byte stSimbolov = br.ReadByte();
+            List<Simbol> simboli = new List<Simbol>();
 
-            List<object> obj = new List<object>();
+            cF = 0;
+            ulong spMeja = 0;
             for (int i = 0; i < stSimbolov; i++) {
-                byte bajt = br.ReadByte();
-                ulong freq = br.ReadULong();
+                byte vrednost = br.ReadByte();
+                ulong frekvenca = br.ReadUIn64();
 
-                obj.Add(new {Vrednost = bajt, Frekvenca = freq});
+                cF += frekvenca;
+
+                ulong zgMeja = spMeja + frekvenca;
+                simboli.Add(new Simbol(frekvenca, zgMeja, spMeja, vrednost));
+
+                spMeja = zgMeja;
             }
+
+            return simboli.ToArray();
         }
 
-        private static byte[] ZapisiTabelo() {
-            BinWrite bw = new BinWrite();
+        private static byte[] ZapisiGlavo() {
+            BitWriter bw = new BitWriter();
             bw.WriteBits(2, 2);
 
             Simbol[] tabela = new Simbol[4];
@@ -94,21 +87,34 @@ namespace Test {
 
             //št. simbolov
             bw.WriteByte((byte) tabela.Length);
+
+            byte[] bytes = bw.GetData();
+            string byteStr = BinUtils.Bytes2Bin(bytes);
+
+            int a = 5;
+
             for (int i = 0; i < tabela.Length; i++) {
                 //kateri simbol predstavlja
                 bw.WriteByte(tabela[i].Vrednost);
+
+                bytes = bw.GetData();
+                byteStr = BinUtils.Bytes2Bin(bytes);
+
                 //frekvenca
-                bw.WriteULong(tabela[i].Frekvenca);
+                bw.WriteUInt64(tabela[i].Frekvenca);
+
+                bytes = bw.GetData();
+                byteStr = BinUtils.Bytes2Bin(bytes);
             }
 
-            byte[] output = bw.GetOutput();
-            StringBuilder sb = new StringBuilder();
-            foreach (byte b in output) {
-                sb.AppendLine(BinUtils.ULong2Bin(b, 8));
-            }
-            string str = sb.ToString();
+            //byte[] output = bw.GetData();
+            //StringBuilder sb = new StringBuilder();
+            //foreach (byte b in output) {
+            //    sb.AppendLine(BinUtils.ULong2Bin(b, 8));
+            //}
+            //string str = sb.ToString();
 
-            return output;
+            return bw.GetData();
         }
 
         private static string IzpisiBajte(IList<byte> bajti, int splitCount = 4) {

@@ -23,10 +23,18 @@ namespace BinIO {
 
         public bool EOF { get; private set; }
 
+        public string CurrByteStr {
+            get { return BinUtils.Byte2BinBajti(_currByte); }
+        }
+
         public void SeekToStart() {
             _ms.Seek(0, SeekOrigin.Begin);
             _bitPos = 0;
             GetByte();
+        }
+
+        public byte[] ToArray() {
+            return _ms.ToArray();
         }
 
         private bool GetByte() {
@@ -98,8 +106,10 @@ namespace BinIO {
 
             byte preostaloBitovZaBrat = (byte) (seZaBrati - (stCelihBajtov * 8));
 
-            //preberemo naslednji bajt
-            GetByte();
+            //preberemo naslednji bajt če še ga nismo
+            if (stCelihBajtov > 0) {
+                GetByte();
+            }
 
             ulong zacetek = ReadBits(preostaloBitovZaBrat);
             zacetek <<= numbits - preostaloBitovZaBrat;

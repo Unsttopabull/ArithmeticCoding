@@ -8,11 +8,11 @@ namespace ArtimeticniKodirnik.Kodiranje {
 
     public class Kodirnik {
         private MemoryStream _ms;
-        //private BinWrite _izhod;
-        private BinWrite _izhod;
+        private BitWriter _izhod;
         private readonly StBitov _stBitov;
-        private readonly List<Operacija> _operacije;
+        private readonly LinkedList<Operacija> _operacije;
         private readonly Simbol[] _tabelaFrekvenc;
+        private readonly bool _eventsEnabled;
         private int _e3Counter;
         private ulong _cF;
 
@@ -29,10 +29,11 @@ namespace ArtimeticniKodirnik.Kodiranje {
         public delegate void TabelaGeneriranaHandler(IList<Simbol> tabela);
         public event TabelaGeneriranaHandler TabelaGenerirana;
 
-        public Kodirnik(StBitov stBitov) {
+        public Kodirnik(StBitov stBitov, bool enableEvents = false) {
+            _eventsEnabled = enableEvents;
             _e3Counter = 0;
             _tabelaFrekvenc = new Simbol[256];
-            _operacije = new List<Operacija>();
+            _operacije = new LinkedList<Operacija>();
 
             _stBitov = stBitov;
             int stBitovNum;
@@ -62,6 +63,10 @@ namespace ArtimeticniKodirnik.Kodiranje {
             _tretjaCetrtina = _prvaCetrtina * 3;
         }
 
+        public string Izhod {
+            get { return BinUtils.Bytes2Bin(_izhod.GetData()); }
+        }
+
         public byte[] Kodiraj(byte[] podatki) {
             return Kodiraj(new MemoryStream(podatki));
         }
@@ -73,7 +78,7 @@ namespace ArtimeticniKodirnik.Kodiranje {
         public byte[] Kodiraj(MemoryStream ms) {
             _ms = ms;
 
-            _izhod = new BinWrite();
+            _izhod = new BitWriter();
             switch (_stBitov) {
                 case StBitov.Bit8:
                     _izhod.WriteBits(0, 2); //00
@@ -96,12 +101,13 @@ namespace ArtimeticniKodirnik.Kodiranje {
                 return null;
             }
 
-            ObvestiPoslusalceOTabeli();
+            if (_eventsEnabled) {
+                ObvestiPoslusalceOTabeli();
+            }
 
             ZapisiTabelo(_izhod);
 
-            byte[] buffer = _izhod.GetBuffer();
-            int bytes = _izhod.BytePos;
+            byte[] buffer = _izhod.GetData();
             int bitsFull = _izhod.BitPos;
 
             int brano = _ms.ReadByte();
@@ -131,10 +137,13 @@ namespace ArtimeticniKodirnik.Kodiranje {
 
                         _izhod.WriteBits(0, 1);
 
-                        IzpisiE1();
+                        if (_eventsEnabled) {
+                            IzpisiE1();
+                        }
 
                         if (_e3Counter > 0) {
-                            _izhod.WriteBits(1, (byte) _e3Counter);
+                            ulong e3Bits = (ulong) ((1 << (_e3Counter + 1)) - 1);
+                            _izhod.WriteBits(e3Bits, (byte) _e3Counter);
                             _e3Counter = 0;
                         }
                     }
@@ -146,7 +155,9 @@ namespace ArtimeticniKodirnik.Kodiranje {
 
                         _izhod.WriteBits(1, 1);
 
-                        IzpisiE2();
+                        if (_eventsEnabled) {
+                            IzpisiE2();
+                        }
 
                         if (_e3Counter > 0) {
                             _izhod.WriteBits(0, (byte) _e3Counter);
@@ -162,10 +173,14 @@ namespace ArtimeticniKodirnik.Kodiranje {
                     _zgornjaMeja = 2 * (_zgornjaMeja - _prvaCetrtina) + 1;
                     _e3Counter++;
 
-                    _operacije.Add(new Operacija("E3", _spodnjaMeja, _zgornjaMeja));
+                    if (_eventsEnabled) {
+                        _operacije.AddLast(new Operacija("E3", _spodnjaMeja, _zgornjaMeja));
+                    }
                 }
 
-                PosljiPoslusalcem(brano, spMeja, zgMeja, korak, nSpMeja, nZgMeja);
+                if (_eventsEnabled) {
+                    PosljiPoslusalcem(brano, spMeja, zgMeja, korak, nSpMeja, nZgMeja);
+                }
 
                 brano = _ms.ReadByte();
             }
@@ -173,32 +188,36 @@ namespace ArtimeticniKodirnik.Kodiranje {
 
 
             if (_spodnjaMeja < _prvaCetrtina) {
-                _izhod.WriteBits(1, 2);
-                _izhod.WriteBits(1, (byte) _e3Counter);
+                _izhod.WriteBits(1, 2); // "01"
 
-                PosljiPoslusalcemOstanek("01" + string.Join(null, Enumerable.Repeat(1, _e3Counter)));
+                ulong e3Bits = (ulong) ((1 << (_e3Counter + 1)) - 1); // 2^(e3 + 1) - 1
+                _izhod.WriteBits(e3Bits, (byte) _e3Counter); //e3 * "1"
+
+                if (_eventsEnabled) {
+                    PosljiPoslusalcemOstanek("01" + string.Join(null, Enumerable.Repeat(1, _e3Counter)));
+                }
             }
             else {
-                //_izhod.WriteBits(2, 2);
-                //_izhod.WriteBits(0, (byte) _e3Counter);
+                _izhod.WriteBits(2, 2); // "10"
+                _izhod.WriteBits(0, (byte) _e3Counter); //e3 * "0"
 
-                _izhod.WriteBits((ulong) (2 << _e3Counter), (byte) (2 + _e3Counter));
-
-                PosljiPoslusalcemOstanek("10" + string.Join(null, Enumerable.Repeat(0, _e3Counter)));
+                if (_eventsEnabled) {
+                    PosljiPoslusalcemOstanek("10" + string.Join(null, Enumerable.Repeat(0, _e3Counter)));
+                }
             }
 
-            byte[] output = _izhod.GetOutput();
+            byte[] output = _izhod.GetData();
             return output;
         }
 
         private void IzpisiE2() {
             string e3Bits = string.Join(null, Enumerable.Repeat("0", _e3Counter));
-            _operacije.Add(new Operacija("E2", _spodnjaMeja, _zgornjaMeja, "1", e3Bits));
+            _operacije.AddLast(new Operacija("E2", _spodnjaMeja, _zgornjaMeja, "1", e3Bits));
         }
 
         private void IzpisiE1() {
             string e3Bits = string.Join(null, Enumerable.Repeat("1", _e3Counter));
-            _operacije.Add(new Operacija("E1", _spodnjaMeja, _zgornjaMeja, "0", e3Bits));
+            _operacije.AddLast(new Operacija("E1", _spodnjaMeja, _zgornjaMeja, "0", e3Bits));
         }
 
         private void PosljiPoslusalcemOstanek(string ostanek) {
@@ -227,16 +246,17 @@ namespace ArtimeticniKodirnik.Kodiranje {
             _operacije.Clear();
         }
 
-        private void ZapisiTabelo(BinWrite bw) {
+        private void ZapisiTabelo(BitWriter bw) {
             Simbol[] tabela = _tabelaFrekvenc.Where(s => s != null).ToArray();
 
             //št. simbolov
-            bw.WriteByte((byte) tabela.Length);
+            byte length = (byte) tabela.Length;
+            bw.WriteByte(length);
             foreach (Simbol simbol in tabela) {
                 //kateri simbol predstavlja
                 bw.WriteByte(simbol.Vrednost);
                 //frekvenca
-                bw.WriteULong(simbol.Frekvenca);
+                bw.WriteUInt64(simbol.Frekvenca);
             }
         }
 

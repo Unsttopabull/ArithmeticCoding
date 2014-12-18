@@ -22,23 +22,22 @@ namespace Vaja1_ArtimeticniKodirnik {
             _kodirnik.SimbolZakodiran += SimbolZakodiran;
             _kodirnik.TabelaGenerirana += TabelaGenerirana;
 
-            _dekodirnik = new Dekodirnik();
+            _dekodirnik = new Dekodirnik(true);
             _dekodirnik.SimbolDekodiran += SimbolDekodiran;
             _dekodirnik.TabelaGenerirana += TabelaGenerirana;
         }
 
         private void TabelaGenerirana(IList<Simbol> tabela) {
-            for (int i = 0; i < tabela.Count; i++) {
-                if (tabela[i] == null) {
+            foreach (Simbol s in tabela) {
+                if (s == null) {
                     continue;
                 }
 
-                Simbol simbol = tabela[i];
                 string[] podatki = {
-                    new string((char)simbol.Vrednost, 1), 
-                    simbol.Frekvenca.ToString(CultureInfo.InvariantCulture),
-                    simbol.SpodnjaMeja.ToString(CultureInfo.InvariantCulture),
-                    simbol.ZgornjaMeja.ToString(CultureInfo.InvariantCulture),
+                    new string((char)s.Vrednost, 1), 
+                    s.Frekvenca.ToString(CultureInfo.InvariantCulture),
+                    s.SpodnjaMeja.ToString(CultureInfo.InvariantCulture),
+                    s.ZgornjaMeja.ToString(CultureInfo.InvariantCulture),
                 };
 
                 lvTabela.Items.Add(new ListViewItem(podatki));
