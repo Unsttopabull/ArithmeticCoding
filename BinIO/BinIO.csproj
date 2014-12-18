@@ -44,8 +44,6 @@
     <Compile Include="BinUtils.cs" />
     <Compile Include="BinWrite.cs" />
     <Compile Include="BinWriteFile.cs" />
-    <Compile Include="Bit\BitReader3.cs" />
-    <Compile Include="Bit\BitReader2.cs" />
     <Compile Include="Bit\BitReader.cs" />
     <Compile Include="Bit\BitWriter.cs" />
     <Compile Include="IBinRead.cs" />

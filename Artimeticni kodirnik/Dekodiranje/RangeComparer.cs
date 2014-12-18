@@ -9,7 +9,7 @@ namespace ArtimeticniKodirnik.Dekodiranje {
         /// <param name="x">The first object to compare. </param><param name="y">The second object to compare. </param>
         /// <exception cref="T:System.ArgumentException">Neither <paramref name="x"/> nor <paramref name="y"/> implements the <see cref="T:System.IComparable"/> interface.-or- <paramref name="x"/> and <paramref name="y"/> are of different types and neither one can handle comparisons with the other. </exception>
         public int Compare(object x, object y) {
-            Simbol s = x as Simbol;
+            Simbol s = (Simbol) x;
             double val = (double) y;
 
             if (s.ZgornjaMeja <= val) {

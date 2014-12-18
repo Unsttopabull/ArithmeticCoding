@@ -92,7 +92,7 @@ namespace ArtimeticniKodirnik.Dekodiranje {
                 _polje = (_polje << 1) + _vhod.ReadBits(1);
             }
 
-            string poljeBin = BinUtils.Long2Bin(_polje, _stBitov - 1);
+            string poljeBin = BinUtils.ULong2Bin(_polje, _stBitov - 1);
             //_polje = new Polje((StBitov)readBits, polje);
 
             ulong iter = 1;
@@ -170,7 +170,7 @@ namespace ArtimeticniKodirnik.Dekodiranje {
                 return;
             }
 
-            string polje = BinUtils.Long2Bin(_polje, _stBitov - 1);
+            string polje = BinUtils.ULong2Bin(_polje, _stBitov - 1);
             SimbolDekodiran(polje, spMeja, zgMeja, korak, vrednost, simbol, nSpMeja, nZgMeja, _operacije.ToArray());
         }
 

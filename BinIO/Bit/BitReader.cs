@@ -135,43 +135,42 @@ namespace BinIO {
         }
 
         public sbyte ReadSByte() {
-            return 0;
+            return (sbyte) ReadBits(8);
         }
 
         public short ReadInt16() {
-            return 0;
+            return (short) ReadBits(16);
         }
 
         public ushort ReadUInt16() {
-            return 0;
+            return (ushort) ReadBits(16);
         }
 
         public int ReadInt32() {
             ulong data = ReadBits(32);
 
-            int int32 = BitConverter.ToInt32(BitConverter.GetBytes(data), 0);
-            return int32;
+            //int int32 = BitConverter.ToInt32(BitConverter.GetBytes(data), 0);
+            return (int) data;
         }
-
 
         public uint ReadUInt32() {
-            return 0;
+            return (uint) ReadBits(32);
         }
 
-        public long ReadLong() {
-            return 0;
+        public long ReadInt64() {
+            return (long) ReadBits(64);
         }
 
-        public ulong ReadULong() {
-            return 0;
+        public ulong ReadUIn64() {
+            return ReadBits(64);
         }
 
         public float ReadFloat() {
-            return 0;
+            return BitConverter.ToSingle(BitConverter.GetBytes(ReadBits(32)), 0);
         }
 
         public double ReadDouble() {
-            return 0;
+            return BitConverter.ToDouble(BitConverter.GetBytes(ReadBits(64)), 0);
         }
     }
 

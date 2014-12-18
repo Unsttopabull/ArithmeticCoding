@@ -97,18 +97,20 @@ namespace BinIO {
             WriteBits(data, 32);
         }
 
-        public void WriteLong(long data) {
+        public void WriteInt64(long data) {
             WriteBits((ulong) data, 64);
         }
 
-        public void WriteULong(ulong data) {
+        public void WriteUInt64(ulong data) {
             WriteBits(data, 64);
         }
 
         public void WriteFloat(float data) {
+            WriteInt32(BitConverter.ToInt32(BitConverter.GetBytes(data), 0));
         }
 
         public void WriteDouble(double data) {
+            WriteInt64(BitConverter.ToInt64(BitConverter.GetBytes(data), 0));
         }
     }
 
