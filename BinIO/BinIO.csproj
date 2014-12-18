@@ -40,9 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinUtils.cs" />
-    <Compile Include="Bit\BitReader2.cs" />
     <Compile Include="Bit\BitReader.cs" />
-    <Compile Include="Bit\BitWriter2.cs" />
     <Compile Include="Bit\BitWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
