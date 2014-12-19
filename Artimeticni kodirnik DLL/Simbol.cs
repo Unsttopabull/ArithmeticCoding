@@ -35,7 +35,7 @@ namespace ArtimeticniKodirnik.DLL {
                 if (val >= ZgornjaMeja) {
                     return -1;
                 }
-                else if (SpodnjaMeja > val) {
+                if (SpodnjaMeja > val) {
                     return 1;
                 }
                 return 0;

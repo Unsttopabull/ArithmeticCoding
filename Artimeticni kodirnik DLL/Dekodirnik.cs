@@ -62,7 +62,6 @@ namespace ArtimeticniKodirnik.DLL {
 
             NapolniTabeloUrejeno();
 
-            //_polje = _vhod.ReadBits((byte) (_stBitov - 1));
             // Napolnimo polje z n-1 bitov:
             _polje = 0;
             for (int i = 0; i < stBitov - 1; i++) {
@@ -127,17 +126,10 @@ namespace ArtimeticniKodirnik.DLL {
         }
 
         private Simbol NajdiSimbol(double vrednost) {
-            //return _tabelaFrekvenc.FirstOrDefault(s => vrednost < s.ZgornjaMeja);
-
-            Simbol sim = _tabelaFrekvenc.FirstOrDefault(s => s.ZgornjaMeja > vrednost && s.SpodnjaMeja <= vrednost);
-            if (sim != null) {
-                return sim;
+            int binarySearch = Array.BinarySearch(_tabelaFrekvenc, vrednost);
+            if (binarySearch >= 0) {
+                return _tabelaFrekvenc[binarySearch];
             }
-
-            //int binarySearch = Array.BinarySearch(_tabelaFrekvenc, vrednost);
-            //if (binarySearch > 0) {
-            //    return _tabelaFrekvenc[binarySearch];
-            //}
             return null;
         }
 
