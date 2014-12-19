@@ -11,6 +11,7 @@ namespace BinIO {
         private byte _bitPos;
 
         private BitReader(MemoryStream ms) {
+			//GC.Collect();
             _ms = ms;
             GetByte();
         }
@@ -23,9 +24,9 @@ namespace BinIO {
 
         public bool EOF { get; private set; }
 
-        public string CurrByteStr {
-            get { return BinUtils.Byte2BinBajti(_currByte); }
-        }
+        //public string CurrByteStr {
+        //    get { return BinUtils.Byte2BinBajti(_currByte); }
+        //}
 
         public void SeekToStart() {
             _ms.Seek(0, SeekOrigin.Begin);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using BinIO;
 
 namespace ArtimeticniKodirnik.Dekodiranje {
@@ -44,17 +45,19 @@ namespace ArtimeticniKodirnik.Dekodiranje {
 
         public bool EventsEnabled { get; set; }
 
-        public void Dekodiraj(string inFile, string outFile) {
-            Dekodiraj(new BitReader(inFile), outFile);
+        public byte[] Dekodiraj(string inFile, string outFile) {
+            return Dekodiraj(new BitReader(inFile), outFile);
         }
 
-        public void Dekodiraj(byte[] podatki, string outFile) {
-            Dekodiraj(new BitReader(podatki), outFile);
+        public byte[] Dekodiraj(byte[] podatki, string outFile) {
+            return Dekodiraj(new BitReader(podatki), outFile);
         }
 
-        private void Dekodiraj(BitReader read, string outFile) {
+        private byte[] Dekodiraj(BitReader read, string outFile) {
             _cF = 0;
             _vhod = read;
+			GC.Collect();
+			
             _operacije = new LinkedList<string>();
             
             _outFile = outFile;
@@ -102,7 +105,7 @@ namespace ArtimeticniKodirnik.Dekodiranje {
                 _polje = (_polje << 1) + _vhod.ReadBits(1);
             }
 
-            string poljeBin = BinUtils.ULong2Bin(_polje, _stBitov - 1);
+            //string poljeBin = BinUtils.ULong2Bin(_polje, _stBitov - 1);
             //_polje = new Polje((StBitov)readBits, polje);
 
             ulong iter = 1;
@@ -114,7 +117,7 @@ namespace ArtimeticniKodirnik.Dekodiranje {
                 Simbol simbol = NajdiSimbol(vrednost);
                 if (simbol == null) {
                     Console.Error.WriteLine("Ni bilo mogoče najti simbola");
-                    return;
+                    return null;
                 }
 
                 _list.AddLast(simbol.Vrednost);
@@ -180,25 +183,9 @@ namespace ArtimeticniKodirnik.Dekodiranje {
             }
             while (iter <= _cF);
 
-            File.WriteAllBytes(outFile, _list.ToArray());
-        }
-
-        private void PosljiDekodiranSimbolPosljusalcem(ulong spMeja, ulong zgMeja, ulong korak, ulong nSpMeja, ulong nZgMeja, ulong vrednost, byte simbol) {
-            if (SimbolDekodiran == null) {
-                return;
-            }
-
-            string polje = BinUtils.ULong2Bin(_polje, _stBitov - 1);
-            SimbolDekodiran(polje, spMeja, zgMeja, korak, vrednost, simbol, nSpMeja, nZgMeja, _operacije.ToArray());
-            _operacije.Clear();
-        }
-
-        private void PosljiTabeloPosljusalcem() {
-            if (TabelaGenerirana == null) {
-                return;
-            }
-
-            TabelaGenerirana(_tabelaFrekvenc);
+            byte[] data = _list.ToArray();
+            File.WriteAllBytes(outFile, data);
+            return data;
         }
 
         private Simbol NajdiSimbol(double vrednost) {
@@ -208,13 +195,12 @@ namespace ArtimeticniKodirnik.Dekodiranje {
             if (sim != null) {
                 return sim;
             }
-            return null;
 
-            //int binarySearch = Array.BinarySearch(_tabelaFrekvenc, vrednost, new RangeComparer());
+            //int binarySearch = Array.BinarySearch(_tabelaFrekvenc, vrednost);
             //if (binarySearch > 0) {
             //    return _tabelaFrekvenc[binarySearch];
             //}
-            //return null;
+            return null;
         }
 
         //private void NapolniTabelo() {
@@ -240,7 +226,14 @@ namespace ArtimeticniKodirnik.Dekodiranje {
         private void NapolniTabeloUrejeno() {
             int stSimbolov = _vhod.ReadByte();
 
+            if (stSimbolov == 0) {
+                stSimbolov = 256;
+            }
+
             List<Simbol> simboli = new List<Simbol>();
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("S;F;SpX;ZgX;");
 
             ulong spMeja = 0;
             for (int i = 0; i < stSimbolov; i++) {
@@ -251,11 +244,32 @@ namespace ArtimeticniKodirnik.Dekodiranje {
 
                 ulong zgMeja = spMeja + frekvenca;
                 simboli.Add(new Simbol(frekvenca, zgMeja, spMeja, vrednost));
+                sb.AppendLine(string.Format("{0};{1};{2};{3};", vrednost, frekvenca, spMeja, zgMeja));
 
                 spMeja = zgMeja;
             }
+            sb.AppendLine(string.Format("CF;{0};;;", _cF));
+            File.WriteAllText("tabela_dec.csv", sb.ToString());
 
             _tabelaFrekvenc = simboli.ToArray();
+        }
+
+        private void PosljiDekodiranSimbolPosljusalcem(ulong spMeja, ulong zgMeja, ulong korak, ulong nSpMeja, ulong nZgMeja, ulong vrednost, byte simbol) {
+            if (SimbolDekodiran == null) {
+                return;
+            }
+
+            string polje = BinUtils.ULong2Bin(_polje, _stBitov - 1);
+            SimbolDekodiran(polje, spMeja, zgMeja, korak, vrednost, simbol, nSpMeja, nZgMeja, _operacije.ToArray());
+            _operacije.Clear();
+        }
+
+        private void PosljiTabeloPosljusalcem() {
+            if (TabelaGenerirana == null) {
+                return;
+            }
+
+            TabelaGenerirana(_tabelaFrekvenc);
         }
     }
 

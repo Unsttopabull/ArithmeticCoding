@@ -9,14 +9,20 @@ namespace BinIO {
         private byte _bitPos;
 
         public BitWriter() {
+			GC.Collect();
             _ms = new MemoryStream();
         }
+		
+		public BitWriter(int initialCapacity){
+			//GC.Collect();
+			_ms = new MemoryStream(initialCapacity);
+		}
 
         public byte BitPos { get { return _bitPos; } }
 
-        public string CurrByteStr {
-            get { return BinUtils.Byte2BinBajti(_currByte); }
-        }
+        //public string CurrByteStr {
+        //    get { return BinUtils.Byte2BinBajti(_currByte); }
+        //}
 
         public long NumBytes {
             get { return _bitPos > 0 ? _ms.Length + 1 : _ms.Length; }
@@ -55,11 +61,11 @@ namespace BinIO {
             else{
                 //preberemo "bits" bitov
                 ulong maska = (ulong) ((1 << bits) - 1);
-                string maskaStr = BinUtils.ULong2BinBajti(maska, 8);
+                //string maskaStr = BinUtils.ULong2BinBajti(maska, 8);
 
                 byte byteData = (byte) (data & maska);
 
-                string byteDataStr = BinUtils.ULong2BinBajti(data, 8);
+                //string byteDataStr = BinUtils.ULong2BinBajti(data, 8);
 
                 //premaknemo že vpisano na levo
                 _currByte <<= bits;
@@ -73,13 +79,13 @@ namespace BinIO {
         private void FillByte(ulong data, byte bitsToFill) {
             //pridobimo toliko "bitsToFill" bitov iz "data"
             ulong maska = (ulong) ((1 << bitsToFill) - 1);
-            string maskaStr = BinUtils.ULong2BinBajti(maska, 8);
+            //string maskaStr = BinUtils.ULong2BinBajti(maska, 8);
 
-            string dataStr = BinUtils.ULong2BinBajti(data, 64);
+            //string dataStr = BinUtils.ULong2BinBajti(data, 64);
 
             byte byteData = (byte) (data & maska);
 
-            string byteDataStr = BinUtils.ULong2BinBajti(byteData, 8);
+            //string byteDataStr = BinUtils.ULong2BinBajti(byteData, 8);
 
             //potisnemo že zapisano na levo
             _currByte <<= bitsToFill;

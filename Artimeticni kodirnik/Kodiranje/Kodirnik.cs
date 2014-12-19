@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using BinIO;
 
 namespace ArtimeticniKodirnik.Kodiranje {
@@ -63,9 +64,9 @@ namespace ArtimeticniKodirnik.Kodiranje {
             _tretjaCetrtina = _prvaCetrtina * 3;
         }
 
-        public string Izhod {
-            get { return BinUtils.Bytes2Bin(_izhod.GetData()); }
-        }
+        //public string Izhod {
+        //    get { return BinUtils.Bytes2Bin(_izhod.GetData()); }
+        //}
 
         public byte[] Kodiraj(byte[] podatki) {
             return Kodiraj(new MemoryStream(podatki));
@@ -79,6 +80,8 @@ namespace ArtimeticniKodirnik.Kodiranje {
             _ms = ms;
 
             _izhod = new BitWriter();
+			GC.Collect();
+			
             switch (_stBitov) {
                 case StBitov.Bit8:
                     _izhod.WriteBits(0, 2); //00
@@ -106,9 +109,6 @@ namespace ArtimeticniKodirnik.Kodiranje {
             }
 
             ZapisiTabelo(_izhod);
-
-            byte[] buffer = _izhod.GetData();
-            int bitsFull = _izhod.BitPos;
 
             int brano = _ms.ReadByte();
             do {
@@ -210,42 +210,6 @@ namespace ArtimeticniKodirnik.Kodiranje {
             return output;
         }
 
-        private void IzpisiE2() {
-            string e3Bits = string.Join(null, Enumerable.Repeat("0", _e3Counter));
-            _operacije.AddLast(new Operacija("E2", _spodnjaMeja, _zgornjaMeja, "1", e3Bits));
-        }
-
-        private void IzpisiE1() {
-            string e3Bits = string.Join(null, Enumerable.Repeat("1", _e3Counter));
-            _operacije.AddLast(new Operacija("E1", _spodnjaMeja, _zgornjaMeja, "0", e3Bits));
-        }
-
-        private void PosljiPoslusalcemOstanek(string ostanek) {
-            if (SimbolZakodiran == null) {
-                return;
-            }
-
-            SimbolZakodiran(0, 0, 0, 0, 0, 0, -1, new Operacija("Ostanek -> " + ostanek, ostanek));
-        }
-
-        private void ObvestiPoslusalceOTabeli() {
-            if (TabelaGenerirana == null) {
-                return;
-            }
-
-            Simbol[] tabela = _tabelaFrekvenc.Where(s => s != null).ToArray();
-            TabelaGenerirana(tabela);
-        }
-
-        private void PosljiPoslusalcem(int brano, ulong spMeja, ulong zgMeja, ulong korak, ulong nSpMeja, ulong nZgMeja) {
-            if (SimbolZakodiran == null) {
-                return;
-            }
-
-            SimbolZakodiran((byte) brano, spMeja, zgMeja, korak, nSpMeja, nZgMeja, _e3Counter, _operacije.ToArray());
-            _operacije.Clear();
-        }
-
         private void ZapisiTabelo(BitWriter bw) {
             Simbol[] tabela = _tabelaFrekvenc.Where(s => s != null).ToArray();
 
@@ -299,6 +263,9 @@ namespace ArtimeticniKodirnik.Kodiranje {
         private bool IzracunajTabeloUrejeno() {
             _ms.Seek(0, SeekOrigin.Begin);
 
+            StringBuilder sb = new StringBuilder();
+            
+
             int brano = _ms.ReadByte();
             if (brano == -1) {
                 _ms.Seek(0, SeekOrigin.Begin);
@@ -315,6 +282,8 @@ namespace ArtimeticniKodirnik.Kodiranje {
             }
             while (brano >= 0);
 
+            sb.AppendLine("S;F;SpX;ZgX;");
+
             ulong spMeja = 0;
             for (int i = 0; i < 256; i++) {
                 ulong frekvenca = frekvence[i];
@@ -324,12 +293,53 @@ namespace ArtimeticniKodirnik.Kodiranje {
 
                 ulong zgMeja = spMeja + frekvenca;
                 _tabelaFrekvenc[i] = new Simbol(frekvenca, zgMeja, spMeja, (byte) i);
+                sb.AppendLine(string.Format("{0};{1};{2};{3};", _tabelaFrekvenc[i].Vrednost, _tabelaFrekvenc[i].Frekvenca, _tabelaFrekvenc[i].SpodnjaMeja,_tabelaFrekvenc[i].ZgornjaMeja));
 
                 spMeja = zgMeja;
             }
 
+            sb.AppendLine("CF;" + _cF + ";;;");
+
+            File.WriteAllText("tabela_enc.csv", sb.ToString());
+
             _ms.Seek(0, SeekOrigin.Begin);
             return true;
+        }
+
+        private void IzpisiE2() {
+            string e3Bits = string.Join(null, Enumerable.Repeat("0", _e3Counter));
+            _operacije.AddLast(new Operacija("E2", _spodnjaMeja, _zgornjaMeja, "1", e3Bits));
+        }
+
+        private void IzpisiE1() {
+            string e3Bits = string.Join(null, Enumerable.Repeat("1", _e3Counter));
+            _operacije.AddLast(new Operacija("E1", _spodnjaMeja, _zgornjaMeja, "0", e3Bits));
+        }
+
+        private void PosljiPoslusalcemOstanek(string ostanek) {
+            if (SimbolZakodiran == null) {
+                return;
+            }
+
+            SimbolZakodiran(0, 0, 0, 0, 0, 0, -1, new Operacija("Ostanek -> " + ostanek, ostanek));
+        }
+
+        private void ObvestiPoslusalceOTabeli() {
+            if (TabelaGenerirana == null) {
+                return;
+            }
+
+            Simbol[] tabela = _tabelaFrekvenc.Where(s => s != null).ToArray();
+            TabelaGenerirana(tabela);
+        }
+
+        private void PosljiPoslusalcem(int brano, ulong spMeja, ulong zgMeja, ulong korak, ulong nSpMeja, ulong nZgMeja) {
+            if (SimbolZakodiran == null) {
+                return;
+            }
+
+            SimbolZakodiran((byte) brano, spMeja, zgMeja, korak, nSpMeja, nZgMeja, _e3Counter, _operacije.ToArray());
+            _operacije.Clear();
         }
     }
 

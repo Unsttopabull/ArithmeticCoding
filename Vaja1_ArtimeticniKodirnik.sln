@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinIO", "BinIO\BinIO.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Artimeticni kodirnik", "Artimeticni kodirnik\Artimeticni kodirnik.csproj", "{36F006E8-CAB2-4E26-90C0-80D7D3F5E8C0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DllTest", "DllTest\DllTest.csproj", "{FA1AE3DB-0975-4C40-A435-864135CEF497}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{36F006E8-CAB2-4E26-90C0-80D7D3F5E8C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36F006E8-CAB2-4E26-90C0-80D7D3F5E8C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36F006E8-CAB2-4E26-90C0-80D7D3F5E8C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA1AE3DB-0975-4C40-A435-864135CEF497}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA1AE3DB-0975-4C40-A435-864135CEF497}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA1AE3DB-0975-4C40-A435-864135CEF497}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA1AE3DB-0975-4C40-A435-864135CEF497}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

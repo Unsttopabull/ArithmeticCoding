@@ -22,7 +22,7 @@ namespace Vaja1_ArtimeticniKodirnik {
             _kodirnik.SimbolZakodiran += SimbolZakodiran;
             _kodirnik.TabelaGenerirana += TabelaGenerirana;
 
-            _dekodirnik = new Dekodirnik(true);
+            _dekodirnik = new Dekodirnik(false);
             _dekodirnik.SimbolDekodiran += SimbolDekodiran;
             _dekodirnik.TabelaGenerirana += TabelaGenerirana;
         }
