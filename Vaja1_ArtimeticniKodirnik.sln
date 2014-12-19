@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Artimeticni kodirnik", "Art
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DllTest", "DllTest\DllTest.csproj", "{FA1AE3DB-0975-4C40-A435-864135CEF497}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Artimeticni kodirnik DLL", "Artimeticni kodirnik DLL\Artimeticni kodirnik DLL.csproj", "{4DB5CF69-707E-4993-9CE7-3B53777E3CC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{FA1AE3DB-0975-4C40-A435-864135CEF497}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA1AE3DB-0975-4C40-A435-864135CEF497}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA1AE3DB-0975-4C40-A435-864135CEF497}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DB5CF69-707E-4993-9CE7-3B53777E3CC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DB5CF69-707E-4993-9CE7-3B53777E3CC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DB5CF69-707E-4993-9CE7-3B53777E3CC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DB5CF69-707E-4993-9CE7-3B53777E3CC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

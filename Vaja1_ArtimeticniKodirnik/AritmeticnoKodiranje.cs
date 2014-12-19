@@ -27,6 +27,8 @@ namespace Vaja1_ArtimeticniKodirnik {
             _dekodirnik.TabelaGenerirana += TabelaGenerirana;
         }
 
+        #region AC Dogodki
+
         private void TabelaGenerirana(IList<Simbol> tabela) {
             foreach (Simbol s in tabela) {
                 if (s == null) {
@@ -90,6 +92,8 @@ namespace Vaja1_ArtimeticniKodirnik {
             lvPostopek.Items.Add(new ListViewItem(podatki));
         }
 
+        #endregion
+
         private void CbBitiSelectedIndexChanged(object sender, EventArgs e) {
             if (_kodirnik == null) {
                 return;
@@ -130,11 +134,16 @@ namespace Vaja1_ArtimeticniKodirnik {
 
             byte[] podatki = Encoding.ASCII.GetBytes(tbText.Text);
 
-            _kodirnik.Kodiraj(podatki);
+            byte[] data = _kodirnik.Kodiraj(podatki);
+            File.WriteAllBytes("tekst.ac", data);
+
+            podatki = new byte[0];
+            data = new byte[0];
+            GC.Collect();
         }
 
         private void BtnDekodirajTextClick(object sender, EventArgs e) {
-            tbRezultat.Text = "";
+            _dekodirnik.Dekodiraj("tekst.ac", "tt.txt");
         }
 
         private void NastaviStolpceZaKodiranje() {
@@ -185,6 +194,9 @@ namespace Vaja1_ArtimeticniKodirnik {
             }
 
             File.WriteAllBytes(sfd.FileName, kodiraj);
+
+            kodiraj = new byte[0];
+            GC.Collect();
         }
 
         private void BtnDekodirajDatotekoClick(object sender, EventArgs e) {
@@ -202,6 +214,7 @@ namespace Vaja1_ArtimeticniKodirnik {
                 return;
             }
             _dekodirnik.Dekodiraj(ofd.FileName, sfd.FileName);
+            GC.Collect();
         }
     }
 

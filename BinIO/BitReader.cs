@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.IO;
-using System.Linq;
 
 namespace BinIO {
 
@@ -11,7 +9,6 @@ namespace BinIO {
         private byte _bitPos;
 
         private BitReader(MemoryStream ms) {
-			//GC.Collect();
             _ms = ms;
             GetByte();
         }
@@ -23,20 +20,6 @@ namespace BinIO {
         }
 
         public bool EOF { get; private set; }
-
-        //public string CurrByteStr {
-        //    get { return BinUtils.Byte2BinBajti(_currByte); }
-        //}
-
-        public void SeekToStart() {
-            _ms.Seek(0, SeekOrigin.Begin);
-            _bitPos = 0;
-            GetByte();
-        }
-
-        public byte[] ToArray() {
-            return _ms.ToArray();
-        }
 
         private bool GetByte() {
             int b = _ms.ReadByte();
@@ -96,9 +79,8 @@ namespace BinIO {
 
                 //spojimo bajte
                 //postavimo "_currByte" na mesto kjer bo nastopal v rezultatu branja
-                //in ga z ALI vpišemo v rezultat
-                int dolzShiftaZaBajtI = (bitsToFull + 8 * i);
-                data |= ((ulong) _currByte) << dolzShiftaZaBajtI;
+                //in ga z logičnim ALI vpišemo v rezultat
+                data |= ((ulong) _currByte) << (bitsToFull + 8 * i);
             }
 
             if (EOF) {
@@ -158,10 +140,7 @@ namespace BinIO {
         }
 
         public int ReadInt32() {
-            ulong data = ReadBits(32);
-
-            //int int32 = BitConverter.ToInt32(BitConverter.GetBytes(data), 0);
-            return (int) data;
+            return (int) ReadBits(32);
         }
 
         public uint ReadUInt32() {

@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DllTest</RootNamespace>
-    <AssemblyName>ACTester</AssemblyName>
+    <AssemblyName>ACDemo</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -41,9 +41,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Artimeticni kodirnik\Artimeticni kodirnik.csproj">
-      <Project>{36F006E8-CAB2-4E26-90C0-80D7D3F5E8C0}</Project>
-      <Name>Artimeticni kodirnik</Name>
+    <ProjectReference Include="..\Artimeticni kodirnik DLL\Artimeticni kodirnik DLL.csproj">
+      <Project>{4db5cf69-707e-4993-9ce7-3b53777e3cc1}</Project>
+      <Name>Artimeticni kodirnik DLL</Name>
     </ProjectReference>
     <ProjectReference Include="..\BinIO\BinIO.csproj">
       <Project>{324bfed6-6bd4-41c8-aef7-8c7ca59137c0}</Project>
