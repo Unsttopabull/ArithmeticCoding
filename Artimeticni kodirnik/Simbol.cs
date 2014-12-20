@@ -3,7 +3,6 @@
 namespace ArtimeticniKodirnik {
 
     public class Simbol : IComparable {
-
         public Simbol(ulong frekvenca, ulong zgornjaMeja, ulong spodnjaMeja, byte vrednost) {
             Frekvenca = frekvenca;
             ZgornjaMeja = zgornjaMeja;
@@ -13,7 +12,7 @@ namespace ArtimeticniKodirnik {
 
         public byte Vrednost { get; set; }
 
-        public ulong Frekvenca { get; set; } 
+        public ulong Frekvenca { get; set; }
 
         public ulong ZgornjaMeja { get; set; }
 
@@ -33,14 +32,13 @@ namespace ArtimeticniKodirnik {
             if (obj is double) {
                 double val = (double) obj;
 
-                if (ZgornjaMeja <= val) {
+                if (val >= ZgornjaMeja) {
                     return -1;
                 }
-
-                if (ZgornjaMeja > val && val > SpodnjaMeja) {
-                    return 0;
+                if (SpodnjaMeja > val) {
+                    return 1;
                 }
-                return 1;
+                return 0;
             }
             return 0;
         }

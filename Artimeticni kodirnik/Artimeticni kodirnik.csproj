@@ -35,7 +35,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Dekodiranje\Dekodirnik.cs" />
-    <Compile Include="Dekodiranje\RangeComparer.cs" />
     <Compile Include="Kodiranje\Kodirnik.cs" />
     <Compile Include="Operacija.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

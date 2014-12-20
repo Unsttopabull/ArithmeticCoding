@@ -61,7 +61,7 @@ namespace AritmeticniKodirnik.Konzola.Demo {
 
         private static void Dekodiraj(byte[] data) {
             Dekodirnik d = new Dekodirnik(true);
-            data = d.Dekodiraj(data, "out.txt");
+            data = d.Dekodiraj(data);
         }
     }
 

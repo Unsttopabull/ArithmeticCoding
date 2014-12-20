@@ -62,7 +62,6 @@ namespace ArtimeticniKodirnik.DLL {
 
             NapolniTabeloUrejeno();
 
-            // Napolnimo polje z n-1 bitov:
             _polje = 0;
             for (int i = 0; i < stBitov - 1; i++) {
                 _polje = (_polje << 1) + _vhod.ReadBits(1);
@@ -121,8 +120,7 @@ namespace ArtimeticniKodirnik.DLL {
             }
             while (iter <= _cF);
 
-            byte[] data = _list.ToArray();
-            return data;
+            return _list.ToArray();
         }
 
         private Simbol NajdiSimbol(double vrednost) {
@@ -140,7 +138,7 @@ namespace ArtimeticniKodirnik.DLL {
                 stSimbolov = 256;
             }
 
-            List<Simbol> simboli = new List<Simbol>();
+            LinkedList<Simbol> simboli = new LinkedList<Simbol>();
 
             ulong spMeja = 0;
             for (int i = 0; i < stSimbolov; i++) {
@@ -150,7 +148,7 @@ namespace ArtimeticniKodirnik.DLL {
                 _cF += frekvenca;
 
                 ulong zgMeja = spMeja + frekvenca;
-                simboli.Add(new Simbol(frekvenca, zgMeja, spMeja, vrednost));
+                simboli.AddLast(new Simbol(frekvenca, zgMeja, spMeja, vrednost));
 
                 spMeja = zgMeja;
             }

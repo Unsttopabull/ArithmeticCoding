@@ -142,7 +142,7 @@ namespace ArtimeticniKodirnik.UI {
         }
 
         private void BtnDekodirajTextClick(object sender, EventArgs e) {
-            _dekodirnik.Dekodiraj("tekst.ac", "tt.txt");
+            _dekodirnik.Dekodiraj("tekst.ac");
         }
 
         private void NastaviStolpceZaKodiranje() {
@@ -212,7 +212,8 @@ namespace ArtimeticniKodirnik.UI {
                 MessageBox.Show("Niste izbrali izhodne datoteke");
                 return;
             }
-            _dekodirnik.Dekodiraj(ofd.FileName, sfd.FileName);
+            byte[] dekodiraj = _dekodirnik.Dekodiraj(ofd.FileName);
+            File.WriteAllBytes(sfd.FileName, dekodiraj);
             GC.Collect();
         }
     }

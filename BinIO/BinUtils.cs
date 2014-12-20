@@ -6,7 +6,7 @@ namespace BinIO {
 
     public static class BinUtils {
 
-        public static string Bytes2Bin(IList<byte> bajti) {
+        public static string Bytes2Bin(IEnumerable<byte> bajti) {
             StringBuilder sb = new StringBuilder();
             foreach (byte b in bajti) {
                 sb.Append(ULong2BinBajti(b, 8) + " ");

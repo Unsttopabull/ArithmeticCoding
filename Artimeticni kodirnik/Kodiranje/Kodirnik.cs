@@ -56,16 +56,12 @@ namespace ArtimeticniKodirnik.Kodiranje {
             }
 
             _spodnjaMeja = 0;
-            _zgornjaMeja = ((ulong) Math.Pow(2, stBitovNum - 1)) - 1;
+            _zgornjaMeja = (1UL << (stBitovNum - 1)) - 1;
 
-            _drugaCetrtina = (_zgornjaMeja + 1) / 2;
-            _prvaCetrtina = _drugaCetrtina / 2;
+            _drugaCetrtina = (_zgornjaMeja + 1) >> 1;
+            _prvaCetrtina = _drugaCetrtina >> 1;
             _tretjaCetrtina = _prvaCetrtina * 3;
         }
-
-        //public string Izhod {
-        //    get { return BinUtils.Bytes2Bin(_izhod.GetData()); }
-        //}
 
         public byte[] Kodiraj(byte[] podatki) {
             return Kodiraj(new MemoryStream(podatki));
@@ -78,8 +74,7 @@ namespace ArtimeticniKodirnik.Kodiranje {
         public byte[] Kodiraj(MemoryStream ms) {
             _ms = ms;
 
-            _izhod = new BitWriter();
-			GC.Collect();
+            _izhod = new BitWriter((int) ms.Length);
 			
             switch (_stBitov) {
                 case StBitov.Bit8:
@@ -131,8 +126,8 @@ namespace ArtimeticniKodirnik.Kodiranje {
                     if (_zgornjaMeja < _drugaCetrtina) {
                         //E1
                         e1 = true;
-                        _spodnjaMeja *= 2;
-                        _zgornjaMeja = (_zgornjaMeja * 2) + 1;
+                        _spodnjaMeja <<= 1;
+                        _zgornjaMeja = (_zgornjaMeja << 1) + 1;
 
                         _izhod.WriteBits(0, 1);
 
@@ -141,7 +136,7 @@ namespace ArtimeticniKodirnik.Kodiranje {
                         }
 
                         if (_e3Counter > 0) {
-                            ulong e3Bits = (ulong) ((1 << (_e3Counter + 1)) - 1);
+                            ulong e3Bits = (ulong) ((1 << _e3Counter) - 1);
                             _izhod.WriteBits(e3Bits, (byte) _e3Counter);
                             _e3Counter = 0;
                         }
@@ -149,8 +144,8 @@ namespace ArtimeticniKodirnik.Kodiranje {
                     else if (_spodnjaMeja >= _drugaCetrtina) {
                         //E2
                         e2 = true;
-                        _spodnjaMeja = 2 * (_spodnjaMeja - _drugaCetrtina);
-                        _zgornjaMeja = 2 * (_zgornjaMeja - _drugaCetrtina) + 1;
+                        _spodnjaMeja = (_spodnjaMeja - _drugaCetrtina) << 1;
+                        _zgornjaMeja = ((_zgornjaMeja - _drugaCetrtina) << 1) + 1;
 
                         _izhod.WriteBits(1, 1);
 
@@ -168,8 +163,8 @@ namespace ArtimeticniKodirnik.Kodiranje {
 
                 while (_spodnjaMeja >= _prvaCetrtina && _zgornjaMeja < _tretjaCetrtina) {
                     //E3
-                    _spodnjaMeja = 2 * (_spodnjaMeja - _prvaCetrtina);
-                    _zgornjaMeja = 2 * (_zgornjaMeja - _prvaCetrtina) + 1;
+                    _spodnjaMeja = (_spodnjaMeja - _prvaCetrtina) << 1;
+                    _zgornjaMeja = ((_zgornjaMeja - _prvaCetrtina) << 1) + 1;
                     _e3Counter++;
 
                     if (_eventsEnabled) {
@@ -189,7 +184,7 @@ namespace ArtimeticniKodirnik.Kodiranje {
             if (_spodnjaMeja < _prvaCetrtina) {
                 _izhod.WriteBits(1, 2); // "01"
 
-                ulong e3Bits = (ulong) ((1 << (_e3Counter + 1)) - 1); // 2^(e3 + 1) - 1
+                ulong e3Bits = (ulong) ((1 << _e3Counter) - 1); // 2^(e3 + 1) - 1
                 _izhod.WriteBits(e3Bits, (byte) _e3Counter); //e3 * "1"
 
                 if (_eventsEnabled) {
@@ -223,47 +218,8 @@ namespace ArtimeticniKodirnik.Kodiranje {
             }
         }
 
-        private bool IzracunajTabelo() {
-            _ms.Seek(0, SeekOrigin.Begin);
-
-            Dictionary<byte, ulong> frekvenca = new Dictionary<byte, ulong>();
-
-            int brano = _ms.ReadByte();
-            if (brano == -1) {
-                _ms.Seek(0, SeekOrigin.Begin);
-                return false;
-            }
-
-            do {
-                _cF++;
-                byte bajt = (byte) brano;
-                if (frekvenca.ContainsKey(bajt)) {
-                    frekvenca[bajt]++;
-                }
-                else {
-                    frekvenca.Add(bajt, 1);
-                }
-                brano = _ms.ReadByte();
-            }
-            while (brano >= 0);
-
-            ulong spMeja = 0;
-            foreach (KeyValuePair<byte, ulong> par in frekvenca) {
-                ulong zgMeja = spMeja + par.Value;
-                _tabelaFrekvenc[par.Key] = new Simbol(par.Value, zgMeja, spMeja, par.Key);
-
-                spMeja = zgMeja;
-            }
-
-            _ms.Seek(0, SeekOrigin.Begin);
-            return true;
-        }
-
         private bool IzracunajTabeloUrejeno() {
             _ms.Seek(0, SeekOrigin.Begin);
-
-            //StringBuilder sb = new StringBuilder();
-            
 
             int brano = _ms.ReadByte();
             if (brano == -1) {
@@ -281,8 +237,6 @@ namespace ArtimeticniKodirnik.Kodiranje {
             }
             while (brano >= 0);
 
-            //sb.AppendLine("S;F;SpX;ZgX;");
-
             ulong spMeja = 0;
             for (int i = 0; i < 256; i++) {
                 ulong frekvenca = frekvence[i];
@@ -292,14 +246,9 @@ namespace ArtimeticniKodirnik.Kodiranje {
 
                 ulong zgMeja = spMeja + frekvenca;
                 _tabelaFrekvenc[i] = new Simbol(frekvenca, zgMeja, spMeja, (byte) i);
-                //sb.AppendLine(string.Format("{0};{1};{2};{3};", _tabelaFrekvenc[i].Vrednost, _tabelaFrekvenc[i].Frekvenca, _tabelaFrekvenc[i].SpodnjaMeja,_tabelaFrekvenc[i].ZgornjaMeja));
 
                 spMeja = zgMeja;
             }
-
-            //sb.AppendLine("CF;" + _cF + ";;;");
-
-            //File.WriteAllText("tabela_enc.csv", sb.ToString());
 
             _ms.Seek(0, SeekOrigin.Begin);
             return true;

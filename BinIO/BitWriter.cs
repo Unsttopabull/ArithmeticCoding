@@ -48,7 +48,7 @@ namespace BinIO {
             //zapišemo v tren bajt
             else{
                 //preberemo "bits" bitov
-                ulong maska = (ulong) ((1 << bits) - 1);
+                ulong maska = (1UL << bits) - 1;
 
                 //premaknemo že vpisano na levo
                 _currByte <<= bits;
@@ -62,7 +62,7 @@ namespace BinIO {
 
         private void FillByte(ulong data, byte bitsToFill) {
             //pridobimo toliko "bitsToFill" bitov iz "data"
-            ulong maska = (ulong) ((1 << bitsToFill) - 1);
+            ulong maska = (1UL << bitsToFill) - 1;
 
             //potisnemo že zapisano na levo
             _currByte <<= bitsToFill;
