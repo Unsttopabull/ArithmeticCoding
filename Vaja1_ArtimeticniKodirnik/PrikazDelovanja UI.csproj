@@ -7,8 +7,8 @@
     <ProjectGuid>{904D0D28-B6BD-42E9-B4B7-CBFA2E80F8D6}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Vaja1_ArtimeticniKodirnik</RootNamespace>
-    <AssemblyName>Vaja1_ArtimeticniKodirnik</AssemblyName>
+    <RootNamespace>ArtimeticniKodirnik.UI</RootNamespace>
+    <AssemblyName>AritmeticniKodirnikUI</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -57,6 +57,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

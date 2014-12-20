@@ -4,11 +4,10 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using ArtimeticniKodirnik;
 using ArtimeticniKodirnik.Dekodiranje;
 using ArtimeticniKodirnik.Kodiranje;
 
-namespace Vaja1_ArtimeticniKodirnik {
+namespace ArtimeticniKodirnik.UI {
 
     public partial class AritmeticnoKodiranje : Form {
         private Kodirnik _kodirnik;
@@ -18,11 +17,11 @@ namespace Vaja1_ArtimeticniKodirnik {
             InitializeComponent();
 
             cbBiti.SelectedIndex = (int) StBitov.Bit8;
-            _kodirnik = new Kodirnik((StBitov) cbBiti.SelectedIndex);
+            _kodirnik = new Kodirnik((StBitov) cbBiti.SelectedIndex, true);
             _kodirnik.SimbolZakodiran += SimbolZakodiran;
             _kodirnik.TabelaGenerirana += TabelaGenerirana;
 
-            _dekodirnik = new Dekodirnik(false);
+            _dekodirnik = new Dekodirnik(true);
             _dekodirnik.SimbolDekodiran += SimbolDekodiran;
             _dekodirnik.TabelaGenerirana += TabelaGenerirana;
         }
@@ -122,7 +121,7 @@ namespace Vaja1_ArtimeticniKodirnik {
             _kodirnik.SimbolZakodiran -= SimbolZakodiran;
             _kodirnik.TabelaGenerirana -= TabelaGenerirana;
 
-            _kodirnik = new Kodirnik(stBitov);
+            _kodirnik = new Kodirnik(stBitov, true);
 
             _kodirnik.SimbolZakodiran += SimbolZakodiran;
             _kodirnik.TabelaGenerirana += TabelaGenerirana;

@@ -1,4 +1,4 @@
-﻿namespace Vaja1_ArtimeticniKodirnik {
+﻿namespace ArtimeticniKodirnik.UI {
     partial class AritmeticnoKodiranje {
         /// <summary>
         /// Required designer variable.

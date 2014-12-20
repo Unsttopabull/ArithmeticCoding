@@ -3,12 +3,12 @@ using System.Diagnostics;
 using System.IO;
 using ArtimeticniKodirnik.DLL;
 
-namespace DllTest {
+namespace AritmeticniKodirnik.Konzola.DllTest {
 
     internal class Program {
 
         private static void Help() {
-            Console.WriteLine("Program AC - coded by "); //+ AC.Author());
+            Console.WriteLine("Program AC - coded by {0}", AC.Author());
             Console.WriteLine("Usage: ACTester -[E/D] inputFile outputFile");
             Environment.Exit(0);
         }
@@ -54,8 +54,8 @@ namespace DllTest {
             }
         }
 
-        private static byte[] Kodiraj(string fileNameIn, string fileNameOut) {
-            byte[] data = File.ReadAllBytes(fileNameIn);
+        private static byte[] Kodiraj(string inputFile, string outputFile) {
+            byte[] data = File.ReadAllBytes(inputFile);
 
             Stopwatch sw = Stopwatch.StartNew();
 
@@ -64,12 +64,12 @@ namespace DllTest {
             sw.Stop();
             Console.WriteLine("Samo kodiranje: " + sw.Elapsed);
 
-            File.WriteAllBytes(fileNameOut, data);
+            File.WriteAllBytes(outputFile, data);
             return data;
         }
 
-        private static byte[] Dekodiraj(string fileNameIn, string fileNameOut) {
-            byte[] data = File.ReadAllBytes(fileNameIn);
+        private static byte[] Dekodiraj(string inputFile, string outpuFile) {
+            byte[] data = File.ReadAllBytes(inputFile);
 
             Stopwatch sw = Stopwatch.StartNew();
 
@@ -79,7 +79,7 @@ namespace DllTest {
             Console.WriteLine("Samo kodiranje: " + sw.Elapsed);
 
             if (data != null) {
-                File.WriteAllBytes(fileNameOut, data);
+                File.WriteAllBytes(outpuFile, data);
             }
 
             return data;

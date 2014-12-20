@@ -7,8 +7,8 @@
     <ProjectGuid>{FA1AE3DB-0975-4C40-A435-864135CEF497}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DllTest</RootNamespace>
-    <AssemblyName>ACDemo</AssemblyName>
+    <RootNamespace>AritmeticniKodirnik.Konzola.DllTest</RootNamespace>
+    <AssemblyName>ACTester</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

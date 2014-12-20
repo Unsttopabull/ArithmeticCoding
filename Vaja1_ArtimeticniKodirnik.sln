@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vaja1_ArtimeticniKodirnik", "Vaja1_ArtimeticniKodirnik\Vaja1_ArtimeticniKodirnik.csproj", "{904D0D28-B6BD-42E9-B4B7-CBFA2E80F8D6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrikazDelovanja UI", "Vaja1_ArtimeticniKodirnik\PrikazDelovanja UI.csproj", "{904D0D28-B6BD-42E9-B4B7-CBFA2E80F8D6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{16BA410A-B3B9-4E38-9611-B3C85158C50E}"
 EndProject
@@ -11,9 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinIO", "BinIO\BinIO.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Artimeticni kodirnik", "Artimeticni kodirnik\Artimeticni kodirnik.csproj", "{36F006E8-CAB2-4E26-90C0-80D7D3F5E8C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DllTest", "DllTest\DllTest.csproj", "{FA1AE3DB-0975-4C40-A435-864135CEF497}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DllTest (ACTester)", "DllTest\DllTest (ACTester).csproj", "{FA1AE3DB-0975-4C40-A435-864135CEF497}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Artimeticni kodirnik DLL", "Artimeticni kodirnik DLL\Artimeticni kodirnik DLL.csproj", "{4DB5CF69-707E-4993-9CE7-3B53777E3CC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrikazDelovanja Konzola (ACDemo)", "PrikazDelovanja Konzola\PrikazDelovanja Konzola (ACDemo).csproj", "{709AC016-7B07-4DC8-97F5-1E22B194D22D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{4DB5CF69-707E-4993-9CE7-3B53777E3CC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DB5CF69-707E-4993-9CE7-3B53777E3CC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DB5CF69-707E-4993-9CE7-3B53777E3CC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{709AC016-7B07-4DC8-97F5-1E22B194D22D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{709AC016-7B07-4DC8-97F5-1E22B194D22D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{709AC016-7B07-4DC8-97F5-1E22B194D22D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{709AC016-7B07-4DC8-97F5-1E22B194D22D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

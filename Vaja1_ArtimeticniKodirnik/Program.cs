@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Vaja1_ArtimeticniKodirnik {
+namespace ArtimeticniKodirnik.UI {
 
     static class Program {
 
