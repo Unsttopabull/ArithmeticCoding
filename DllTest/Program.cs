@@ -76,7 +76,7 @@ namespace AritmeticniKodirnik.Konzola.DllTest {
             data = AC.Decode(data);
 
             sw.Stop();
-            Console.WriteLine("Samo kodiranje: " + sw.Elapsed);
+            Console.WriteLine("Samo dekodiranje: " + sw.Elapsed);
 
             if (data != null) {
                 File.WriteAllBytes(outpuFile, data);

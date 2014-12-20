@@ -9,6 +9,10 @@ namespace Test {
 
     internal class Program {
         private static void Main(string[] args) {
+            int st = 5560;
+            int div = 5560 / 8;
+            int divBit = 5560 >> 3;
+
             byte[] arr = ZapisiGlavo();
             //File.WriteAllBytes("tabela.bin", arr);
 

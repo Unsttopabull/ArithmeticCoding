@@ -4,30 +4,30 @@ using System.IO;
 namespace BinIO {
 
     public class BitReader {
-        private readonly MemoryStream _ms;
+        private readonly byte[] _data;
         private byte _currByte;
         private byte _bitPos;
+        private long _bytePos; 
 
-        private BitReader(MemoryStream ms) {
-            _ms = ms;
-            GetByte();
+        public BitReader(byte[] data) {
+            _data = data;
+            _bytePos = 0;
+            _currByte = _data[0];
+            _bitPos = 0;
         }
 
-        public BitReader(byte[] data) : this(new MemoryStream(data)){
-        }
-
-        public BitReader(string imeDatoteke) : this(new MemoryStream(File.ReadAllBytes(imeDatoteke))){
+        public BitReader(string imeDatoteke) : this(File.ReadAllBytes(imeDatoteke)){
         }
 
         public bool EOF { get; private set; }
 
         private bool GetByte() {
-            int b = _ms.ReadByte();
-            if (b == -1) {
+            if (_bytePos + 1 == _data.Length) {
                 EOF = true;
                 return false;
             }
-            _currByte = (byte) b;
+
+            _currByte = _data[++_bytePos];
             _bitPos = 0;
             return true;
         }
@@ -68,7 +68,7 @@ namespace BinIO {
 
             int seZaBrati = numbits - bitsToFull;
 
-            int stCelihBajtov = seZaBrati / 8;
+            int stCelihBajtov = seZaBrati / 8;//>> 3; //seZaBrati / 8
 
             for (int i = 0; i < stCelihBajtov; i++) {
                 if (i != 0) {

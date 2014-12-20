@@ -13,6 +13,7 @@ namespace ArtimeticniKodirnik.DLL {
         private readonly Simbol[] _tabelaFrekvenc;
         private int _e3Counter;
         private ulong _cF;
+        private ulong _maxFreq;
 
         private readonly ulong _prvaCetrtina;
         private readonly ulong _drugaCetrtina;
@@ -21,7 +22,7 @@ namespace ArtimeticniKodirnik.DLL {
         private ulong _spodnjaMeja;
         private ulong _zgornjaMeja;
 
-        public Kodirnik(StBitov stBitov, bool enableEvents = false) {
+        public Kodirnik(StBitov stBitov) {
             _e3Counter = 0;
             _tabelaFrekvenc = new Simbol[256];
 
@@ -65,7 +66,7 @@ namespace ArtimeticniKodirnik.DLL {
             _ms = ms;
 
             _izhod = new BitWriter((int) ms.Length);
-			
+
             switch (_stBitov) {
                 case StBitov.Bit8:
                     _izhod.WriteBits(0, 2); //00
@@ -163,14 +164,82 @@ namespace ArtimeticniKodirnik.DLL {
         private void ZapisiTabelo(BitWriter bw) {
             Simbol[] tabela = _tabelaFrekvenc.Where(s => s != null).ToArray();
 
-            //št. simbolov
-            byte length = (byte) tabela.Length;
-            bw.WriteByte(length);
+            ulong nacin;
+            int shift, stBitov;
+            int stSimbolov = tabela.Length;
+            bool samoFreq = false;
+
+            if (_maxFreq <= byte.MaxValue) {
+                stBitov = 8;
+                shift = 3;
+                nacin = 0;
+            }
+            else if (_maxFreq <= ushort.MaxValue) {
+                stBitov = 16;
+                shift = 4;
+                nacin = 1;
+            }
+            else if (_maxFreq <= uint.MaxValue) {
+                stBitov = 32;
+                shift = 5;
+                nacin = 2;
+            }
+            else {
+                stBitov = 64;
+                shift = 6;
+                nacin = 3;
+            }
+
+            if (stSimbolov == 256) {
+                samoFreq = true;
+                tabela = _tabelaFrekvenc;
+                bw.WriteBits(nacin, 2); //00, 01, 10, 11
+                bw.WriteBits(1, 1);
+            }
+            else {
+                int samoFreqBits = stSimbolov << shift; //stSimbolov * 8/16/32/64
+                int valInFreqBits = (stSimbolov << 3) + samoFreqBits; //stSimbolov * 8 + samoFreqBits
+
+                bw.WriteBits(nacin, 2); //00, 01, 10, 11
+                if (samoFreqBits >= valInFreqBits) {
+                    bw.WriteBits(0, 1);
+                    bw.WriteByte((byte) stSimbolov);
+                }
+                else {
+                    samoFreq = true;
+                    tabela = _tabelaFrekvenc;
+                    bw.WriteBits(1, 1);
+                }
+            }
+
             foreach (Simbol simbol in tabela) {
-                //kateri simbol predstavlja
-                bw.WriteByte(simbol.Vrednost);
+                if (!samoFreq) {
+                    if (simbol == null) {
+                        bw.WriteByte(0);
+                    }
+                    else {
+                        //kateri simbol predstavlja
+                        bw.WriteByte(simbol.Vrednost);
+                    }
+                }
+
+                ulong frekvenca = simbol == null ? 0 : simbol.Frekvenca;
+
                 //frekvenca
-                bw.WriteUInt64(simbol.Frekvenca);
+                switch (stBitov) {
+                    case 8:
+                        bw.WriteByte((byte) frekvenca);
+                        break;
+                    case 16:
+                        bw.WriteUInt16((ushort) frekvenca);
+                        break;
+                    case 32:
+                        bw.WriteUInt32((uint) frekvenca);
+                        break;
+                    case 64:
+                        bw.WriteUInt64(frekvenca);
+                        break;
+                }
             }
         }
 
@@ -194,10 +263,15 @@ namespace ArtimeticniKodirnik.DLL {
             while (brano >= 0);
 
             ulong spMeja = 0;
+            _maxFreq = 0;
             for (int i = 0; i < 256; i++) {
                 ulong frekvenca = frekvence[i];
                 if (frekvenca == 0) {
                     continue;
+                }
+
+                if (frekvenca > _maxFreq) {
+                    _maxFreq = frekvenca;
                 }
 
                 ulong zgMeja = spMeja + frekvenca;
