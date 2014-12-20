@@ -118,10 +118,6 @@ namespace ArtimeticniKodirnik.DLL {
             }
             while (iter <= _cF);
 
-            //byte[] output = new byte[_list.Count];
-            //_list.CopyTo(output, 0);
-            //return output;
-
             return _list.ToArray();
         }
 
@@ -191,8 +187,6 @@ namespace ArtimeticniKodirnik.DLL {
                 spMeja = zgMeja;
             }
 
-            //_tabelaFrekvenc = new Simbol[simboli.Count];
-            //simboli.CopyTo(_tabelaFrekvenc, 0);
             _tabelaFrekvenc = simboli.ToArray();
         }
 
@@ -218,9 +212,6 @@ namespace ArtimeticniKodirnik.DLL {
 
                 spMeja = zgMeja;
             }
-
-            //_tabelaFrekvenc = new Simbol[simboli.Count];
-            //simboli.CopyTo(_tabelaFrekvenc, 0);
             _tabelaFrekvenc = simboli.ToArray();
         }
 
@@ -247,8 +238,6 @@ namespace ArtimeticniKodirnik.DLL {
                 spMeja = zgMeja;
             }
 
-            //_tabelaFrekvenc = new Simbol[simboli.Count];
-            //simboli.CopyTo(_tabelaFrekvenc, 0);
             _tabelaFrekvenc = simboli.ToArray();
         }
 
@@ -275,8 +264,6 @@ namespace ArtimeticniKodirnik.DLL {
                 spMeja = zgMeja;
             }
 
-            //_tabelaFrekvenc = new Simbol[simboli.Count];
-            //simboli.CopyTo(_tabelaFrekvenc, 0);
             _tabelaFrekvenc = simboli.ToArray();
         }
     }

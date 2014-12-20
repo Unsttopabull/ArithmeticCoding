@@ -11,7 +11,6 @@ namespace ArtimeticniKodirnik.Dekodiranje {
         private const ulong MASKA_32 = 0x7FFFFFFF; 
         private const ulong MASKA_64 = 0x7FFFFFFFFFFFFFFF;
 
-        private byte _stBitov;
         private ulong _maska;
 
         private Simbol[] _tabelaFrekvenc;
@@ -19,6 +18,7 @@ namespace ArtimeticniKodirnik.Dekodiranje {
         private BitReader _vhod;
         private LinkedList<byte> _list;
         private ulong _cF;
+        private int _stBitov;
 
         private ulong _prvaCetrtina;
         private ulong _drugaCetrtina;
@@ -182,17 +182,130 @@ namespace ArtimeticniKodirnik.Dekodiranje {
         }
 
         private void NapolniTabeloUrejeno() {
-            int stSimbolov = _vhod.ReadByte();
+            ulong stBitovZaFreq = _vhod.ReadBits(2);
 
-            if (stSimbolov == 0) {
-                stSimbolov = 256;
+            int stSimbolov = 256;
+            bool samoFreq = false;
+
+            //če so zapisane samo frekvence (vse)
+            ulong samoFreqBit = _vhod.ReadBits(1);
+            if (samoFreqBit != 0) {
+                samoFreq = true;
             }
 
+            if (!samoFreq) {
+                stSimbolov = _vhod.ReadByte();
+                if (stSimbolov == 0) {
+                    stSimbolov = 256;
+                }
+            }
+
+            switch (stBitovZaFreq) {
+                case 0:
+                    ReadTableByte(stSimbolov, samoFreq);
+                    break;
+                case 1:
+                    ReadTableUInt16(stSimbolov, samoFreq);
+                    break;
+                case 2:
+                    ReadTableUInt32(stSimbolov, samoFreq);
+                    break;
+                case 3:
+                    ReadTableUInt64(stSimbolov, samoFreq);
+                    break;
+            }
+        }
+
+        private void ReadTableByte(int stSimbolov, bool samoFreq) {
             LinkedList<Simbol> simboli = new LinkedList<Simbol>();
 
             ulong spMeja = 0;
             for (int i = 0; i < stSimbolov; i++) {
-                byte vrednost = _vhod.ReadByte();
+                byte vrednost;
+                if (!samoFreq) {
+                    vrednost = _vhod.ReadByte();
+                }
+                else {
+                    vrednost = (byte) i;
+                }
+
+                ulong frekvenca = _vhod.ReadByte();
+
+                _cF += frekvenca;
+
+                ulong zgMeja = spMeja + frekvenca;
+                simboli.AddLast(new Simbol(frekvenca, zgMeja, spMeja, vrednost));
+
+                spMeja = zgMeja;
+            }
+            _tabelaFrekvenc = simboli.ToArray();
+        }
+
+        private void ReadTableUInt16(int stSimbolov, bool samoFreq) {
+            LinkedList<Simbol> simboli = new LinkedList<Simbol>();
+
+            ulong spMeja = 0;
+            for (int i = 0; i < stSimbolov; i++) {
+                byte vrednost;
+                if (!samoFreq) {
+                    vrednost = _vhod.ReadByte();
+                }
+                else {
+                    vrednost = (byte) i;
+                }
+
+                ulong frekvenca = _vhod.ReadUInt16();
+
+                _cF += frekvenca;
+
+                ulong zgMeja = spMeja + frekvenca;
+                simboli.AddLast(new Simbol(frekvenca, zgMeja, spMeja, vrednost));
+
+                spMeja = zgMeja;
+            }
+
+            _tabelaFrekvenc = simboli.ToArray();
+        }
+
+        private void ReadTableUInt32(int stSimbolov, bool samoFreq) {
+            LinkedList<Simbol> simboli = new LinkedList<Simbol>();
+
+            ulong spMeja = 0;
+            for (int i = 0; i < stSimbolov; i++) {
+                byte vrednost;
+                if (!samoFreq) {
+                    vrednost = _vhod.ReadByte();
+                }
+                else {
+                    vrednost = (byte) i;
+                }
+
+                ulong frekvenca = _vhod.ReadUInt32();
+
+                _cF += frekvenca;
+
+                ulong zgMeja = spMeja + frekvenca;
+                simboli.AddLast(new Simbol(frekvenca, zgMeja, spMeja, vrednost));
+
+                spMeja = zgMeja;
+            }
+
+            _tabelaFrekvenc = simboli.ToArray();
+        }
+
+        private void ReadTableUInt64(int stSimbolov, bool samoFreq) {
+            LinkedList<Simbol> simboli = new LinkedList<Simbol>();
+
+            ulong spMeja = 0;
+            for (int i = 0; i < stSimbolov; i++) {
+                byte vrednost;
+                if (!samoFreq) {
+                    vrednost = _vhod.ReadByte();
+                }
+                else {
+                    vrednost = (byte) i;
+                }
+
                 ulong frekvenca = _vhod.ReadUIn64();
 
                 _cF += frekvenca;
