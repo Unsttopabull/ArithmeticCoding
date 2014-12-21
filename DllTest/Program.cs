@@ -63,8 +63,13 @@ namespace AritmeticniKodirnik.Konzola.DllTest {
 
             sw.Stop();
             Console.WriteLine("Samo kodiranje: " + sw.Elapsed);
-
-            File.WriteAllBytes(outputFile, data);
+			
+			if(data != null){
+				File.WriteAllBytes(outputFile, data);
+			}
+			else{
+				File.WriteAllBytes(outputFile, new byte[0]);
+			}
             return data;
         }
 
@@ -81,6 +86,9 @@ namespace AritmeticniKodirnik.Konzola.DllTest {
             if (data != null) {
                 File.WriteAllBytes(outpuFile, data);
             }
+			else{
+				File.WriteAllBytes(outputFile, new byte[0]);
+			}
 
             return data;
         }
