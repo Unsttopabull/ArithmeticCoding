@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using BinIO;
 
@@ -8,7 +9,7 @@ namespace ArtimeticniKodirnik.DLL {
     public class Dekodirnik {
         private Simbol[] _tabelaFrekvenc;
         private BitReader _vhod;
-        private LinkedList<byte> _list;
+        private MemoryStream _izhod;
         private ulong _cF;
         private int _stBitov;
 
@@ -33,7 +34,7 @@ namespace ArtimeticniKodirnik.DLL {
             _cF = 0;
             _vhod = read;
 
-            _list = new LinkedList<byte>();
+            _izhod = new MemoryStream((int) read.Length);
 
             ulong readBits = _vhod.ReadBits(2);
 
@@ -77,7 +78,7 @@ namespace ArtimeticniKodirnik.DLL {
                     return null;
                 }
 
-                _list.AddLast(simbol.Vrednost);
+                _izhod.WriteByte(simbol.Vrednost);
 
                 _zgornjaMeja = _spodnjaMeja + korak * simbol.ZgornjaMeja - 1;
                 _spodnjaMeja = _spodnjaMeja + korak * simbol.SpodnjaMeja;
@@ -118,7 +119,7 @@ namespace ArtimeticniKodirnik.DLL {
             }
             while (iter <= _cF);
 
-            return _list.ToArray();
+            return _izhod.ToArray();
         }
 
         private Simbol NajdiSimbol(double vrednost) {

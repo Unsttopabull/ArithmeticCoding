@@ -21,6 +21,8 @@ namespace BinIO {
 
         public bool EOF { get; private set; }
 
+        public long Length { get { return _data.Length; } }
+
         private bool GetByte() {
             if (_bytePos + 1 == _data.Length) {
                 EOF = true;
