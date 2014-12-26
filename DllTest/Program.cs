@@ -39,7 +39,6 @@ namespace AritmeticniKodirnik.Konzola.DllTest {
 
                         Dekodiraj(args[1], args[2]);
 
-                        // Konec merjenje časa in izpis časa:
                         stopwatch.Stop();
                         Console.WriteLine("Dekodirano v: {0}", stopwatch.Elapsed);
                     }
@@ -63,17 +62,12 @@ namespace AritmeticniKodirnik.Konzola.DllTest {
 
             sw.Stop();
             Console.WriteLine("Samo kodiranje: " + sw.Elapsed);
-			
-			if(data != null){
-				File.WriteAllBytes(outputFile, data);
-			}
-			else{
-				File.WriteAllBytes(outputFile, new byte[0]);
-			}
+
+            File.WriteAllBytes(outputFile, data ?? new byte[0]);
             return data;
         }
 
-        private static byte[] Dekodiraj(string inputFile, string outpuFile) {
+        private static byte[] Dekodiraj(string inputFile, string outputFile) {
             byte[] data = File.ReadAllBytes(inputFile);
 
             Stopwatch sw = Stopwatch.StartNew();
@@ -83,12 +77,7 @@ namespace AritmeticniKodirnik.Konzola.DllTest {
             sw.Stop();
             Console.WriteLine("Samo dekodiranje: " + sw.Elapsed);
 
-            if (data != null) {
-                File.WriteAllBytes(outpuFile, data);
-            }
-			else{
-				File.WriteAllBytes(outputFile, new byte[0]);
-			}
+            File.WriteAllBytes(outputFile, data ?? new byte[0]);
 
             return data;
         }

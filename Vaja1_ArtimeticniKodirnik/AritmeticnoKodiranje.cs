@@ -133,7 +133,8 @@ namespace ArtimeticniKodirnik.UI {
 
             byte[] podatki = Encoding.ASCII.GetBytes(tbText.Text);
 
-            byte[] data = _kodirnik.Kodiraj(podatki);
+            byte[] data = _kodirnik.Kodiraj(podatki) ?? new byte[0];
+
             File.WriteAllBytes("tekst.ac", data);
 
             podatki = new byte[0];
@@ -184,7 +185,7 @@ namespace ArtimeticniKodirnik.UI {
                 return;
             }
 
-            byte[] kodiraj = _kodirnik.Kodiraj(ofd.FileName);
+            byte[] kodiraj = _kodirnik.Kodiraj(ofd.FileName) ?? new byte[0];
 
             SaveFileDialog sfd = new SaveFileDialog();
             if (sfd.ShowDialog() != DialogResult.OK) {
@@ -212,7 +213,8 @@ namespace ArtimeticniKodirnik.UI {
                 MessageBox.Show("Niste izbrali izhodne datoteke");
                 return;
             }
-            byte[] dekodiraj = _dekodirnik.Dekodiraj(ofd.FileName);
+            byte[] dekodiraj = _dekodirnik.Dekodiraj(ofd.FileName) ?? new byte[0];
+
             File.WriteAllBytes(sfd.FileName, dekodiraj);
             GC.Collect();
         }
