@@ -134,6 +134,10 @@ namespace ArtimeticniKodirnik.UI {
             byte[] podatki = Encoding.ASCII.GetBytes(tbText.Text);
 
             byte[] data = _kodirnik.Kodiraj(podatki);
+			
+			if(data == null){
+				data = new byte[0];
+			}
             File.WriteAllBytes("tekst.ac", data);
 
             podatki = new byte[0];
@@ -192,6 +196,9 @@ namespace ArtimeticniKodirnik.UI {
                 return;
             }
 
+			if(kodiraj == null){
+				kodiraj = new byte[0];
+			}
             File.WriteAllBytes(sfd.FileName, kodiraj);
 
             kodiraj = new byte[0];
@@ -213,6 +220,10 @@ namespace ArtimeticniKodirnik.UI {
                 return;
             }
             byte[] dekodiraj = _dekodirnik.Dekodiraj(ofd.FileName);
+			
+			if(dekodiraj == null) {
+				dekodiraj = new byte[0];
+			}
             File.WriteAllBytes(sfd.FileName, dekodiraj);
             GC.Collect();
         }
